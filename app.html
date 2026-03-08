@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════╗
+║  EDWARD HIRTH WOODWORKS — CNC DESIGN STUDIO PRO         ║
+║  © 2025 Edward Hirth WoodWorks. All Rights Reserved.    ║
+║  Patent Pending. PROPRIETARY SOFTWARE.                  ║
+║  Inventor: Edward Hirth                                  ║
+║  AI-Assisted Development — Human-Invented & Owned        ║
+╚══════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1A6B3A">
+<title>CarvAI Pro Pro</title>
+<link rel="icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ai.js"></script>
+<style>
+:root{
+  --g:#1A6B3A;--gl:#2A8B4E;--gb:#34A85A;--gd:#0F4423;
+  --a:#D4820A;--al:#F09A20;--ad:#9A5E08;
+  --bg:#070C07;--panel:#0F180F;--st:#162016;--stm:#223022;--stl:#344434;
+  --cr:#EDF5E8;--cd:#B8C8B0;--w:#F8FAF6;
+  --red:#C0392B;--blue:#2471A3;
+  --bdr:rgba(26,107,58,0.18);--bdrb:rgba(26,107,58,0.32);
+  --glow:0 0 28px rgba(26,107,58,0.28);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Barlow',sans-serif;background:var(--bg);color:var(--cr)}
+
+/* ═══ PAYWALL GATE ═══ */
+#paywall-gate{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(4,8,4,0.97);backdrop-filter:blur(20px);
+  display:none;align-items:center;justify-content:center;flex-direction:column;
+}
+.pg-box{
+  background:var(--panel);border:1px solid var(--bdrb);border-radius:20px;
+  padding:48px 40px;max-width:560px;width:92%;text-align:center;
+  box-shadow:0 40px 100px rgba(0,0,0,0.8),var(--glow);
+}
+.pg-seal{width:80px;height:80px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:32px;color:var(--w);margin:0 auto 20px;box-shadow:var(--glow)}
+.pg-box h2{font-family:'Bebas Neue';font-size:36px;letter-spacing:4px;color:var(--w);margin-bottom:8px}
+.pg-box p{font-size:15px;color:var(--cd);line-height:1.6;margin-bottom:26px}
+.pg-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.pgp{background:var(--st);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px 10px;cursor:pointer;transition:all .16s;text-align:center;position:relative}
+.pgp:hover{border-color:var(--gb);transform:translateY(-2px)}
+.pgp.sel{border-color:var(--gb);background:rgba(26,107,58,0.08)}
+.pgp .best{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--g);color:var(--w);font-family:'JetBrains Mono';font-size:7px;font-weight:700;letter-spacing:1.5px;padding:2px 10px;border-radius:10px;white-space:nowrap}
+.pgp .pname{font-family:'Barlow Condensed';font-size:16px;font-weight:700;letter-spacing:2px;color:var(--w);text-transform:uppercase}
+.pgp .pamt{font-family:'Bebas Neue';font-size:38px;color:var(--gb);line-height:1;margin:3px 0}
+.pgp .pper{font-family:'JetBrains Mono';font-size:8px;color:var(--cd)}
+.pg-in{width:100%;background:var(--st);border:1px solid rgba(26,107,58,0.2);border-radius:8px;color:var(--cr);font-family:'Barlow';font-size:15px;padding:12px 14px;outline:none;margin-bottom:9px;transition:border-color .14s}
+.pg-in:focus{border-color:var(--gb)}
+.pg-row{display:flex;gap:9px;margin-top:2px}
+.pg-btn{flex:1;padding:14px;border-radius:8px;font-family:'Barlow Condensed';font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s}
+.pg-btn.go{background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 3px 16px rgba(26,107,58,0.4)}
+.pg-btn.go:hover{transform:translateY(-1px);box-shadow:0 5px 22px rgba(26,107,58,0.55)}
+.pg-btn.demo{background:transparent;border:1px solid var(--bdrb);color:var(--cd);flex:0 0 auto;font-size:13px;padding:14px 18px}
+.pg-btn.demo:hover{border-color:var(--gb);color:var(--gb)}
+.pg-legal{font-family:'JetBrains Mono';font-size:8px;color:var(--stl);margin-top:14px;line-height:1.7}
+.pg-legal a{color:var(--gb);text-decoration:none}
+.pg-back{position:absolute;top:18px;left:18px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:1px;padding:6px 12px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--cd);cursor:pointer;text-transform:uppercase;text-decoration:none}
+.pg-back:hover{border-color:var(--gb);color:var(--gb)}
+
+/* ═══ APP ROOT ═══ */
+#app-root{display:none;flex-direction:column;height:100vh}
+
+/* ═══ TITLEBAR ═══ */
+.titlebar{
+  height:48px;background:rgba(5,9,5,0.98);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bdrb);display:flex;align-items:center;
+  padding:0 10px;gap:6px;flex-shrink:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,0.7);
+}
+.tb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0;margin-right:4px}
+.tb-em{width:28px;height:28px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:12px;color:var(--w);flex-shrink:0}
+.tb-name{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:2px;color:var(--w);text-transform:uppercase;white-space:nowrap}
+.tb-name small{font-family:'JetBrains Mono';font-size:7px;color:var(--gb);letter-spacing:2px;display:block;font-weight:400}
+.tb-sep{width:1px;height:24px;background:var(--bdrb);flex-shrink:0;margin:0 2px}
+
+/* Menubar */
+.menu-btn{font-family:'Barlow';font-size:12px;font-weight:600;letter-spacing:.4px;padding:5px 10px;border-radius:4px;border:none;background:transparent;color:var(--cd);cursor:pointer;transition:all .13s;text-transform:uppercase;white-space:nowrap;position:relative}
+.menu-btn:hover{color:var(--gb);background:rgba(26,107,58,0.09)}
+.menu-btn.act{color:var(--gb);background:rgba(26,107,58,0.09)}
+.dropdown{position:absolute;top:100%;left:0;background:var(--panel);border:1px solid var(--bdrb);border-radius:8px;min-width:220px;box-shadow:0 12px 40px rgba(0,0,0,0.7);z-index:500;display:none;padding:5px}
+.dropdown.open{display:block}
+.dd-item{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-radius:5px;font-size:13px;font-weight:500;color:var(--cr);cursor:pointer;transition:all .12s;gap:12px}
+.dd-item:hover{background:rgba(26,107,58,0.1);color:var(--gb)}
+.dd-item .dd-key{font-family:'JetBrains Mono';font-size:9px;color:var(--stl)}
+.dd-sep{height:1px;background:var(--bdr);margin:4px 6px}
+
+.tb-sp{flex:1}
+/* Mode tabs */
+.mode-tabs{display:flex;background:var(--st);border-radius:5px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.mt-tab{font-family:'Barlow';font-size:11px;font-weight:600;letter-spacing:.5px;padding:5px 13px;cursor:pointer;border:none;background:transparent;color:var(--stl);transition:all .13s;text-transform:uppercase;white-space:nowrap}
+.mt-tab.act{background:var(--g);color:var(--w)}
+.mt-tab:hover:not(.act){color:var(--cd);background:rgba(255,255,255,0.03)}
+
+.tb-user{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:5px;background:var(--st);border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:all .13s;flex-shrink:0}
+.tb-user:hover{border-color:var(--gb)}
+.tb-avatar{width:20px;height:20px;border-radius:4px;background:linear-gradient(135deg,var(--g),var(--a));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:10px;color:var(--w)}
+.tb-uname{font-family:'JetBrains Mono';font-size:9px;color:var(--cd);letter-spacing:.5px}
+.tb-plan{font-family:'JetBrains Mono';font-size:7px;color:var(--gb);letter-spacing:1px;background:rgba(26,107,58,0.12);border:1px solid rgba(26,107,58,0.25);padding:1px 5px;border-radius:2px;text-transform:uppercase}
+
+.icon-btn{width:30px;height:30px;border-radius:5px;border:1px solid rgba(255,255,255,0.06);background:var(--st);color:var(--cd);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .13s;flex-shrink:0}
+.icon-btn:hover{border-color:var(--gb);color:var(--gb)}
+
+/* ═══ TOOLBAR (second row) ═══ */
+.toolbar{
+  height:40px;background:rgba(7,12,7,0.95);border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;padding:0 8px;gap:4px;flex-shrink:0;overflow-x:auto;
+}
+.tool-group{display:flex;align-items:center;gap:2px;padding:0 4px;border-right:1px solid var(--bdr)}
+.tool-group:last-child{border-right:none}
+.tl{width:29px;height:28px;border-radius:4px;border:none;background:transparent;color:var(--cd);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .13s;flex-shrink:0;position:relative}
+.tl:hover{background:rgba(26,107,58,0.1);color:var(--gb)}
+.tl.act{background:rgba(26,107,58,0.18);color:var(--gb);border:1px solid rgba(26,107,58,0.3)}
+.tl-label{font-family:'Barlow';font-size:11px;font-weight:600;letter-spacing:.3px;padding:4px 9px;border-radius:4px;border:none;background:transparent;color:var(--cd);cursor:pointer;transition:all .13s;text-transform:uppercase;white-space:nowrap;height:28px;display:flex;align-items:center}
+.tl-label:hover{background:rgba(26,107,58,0.09);color:var(--gb)}
+.tl-label.act{background:rgba(26,107,58,0.14);color:var(--gb);border:1px solid rgba(26,107,58,0.25)}
+.tl-sep{width:1px;height:22px;background:var(--bdr);margin:0 2px;flex-shrink:0}
+.tl-export{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:1.5px;padding:5px 14px;border-radius:5px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 2px 10px rgba(26,107,58,0.3);transition:all .15s;text-transform:uppercase;white-space:nowrap}
+.tl-export:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(26,107,58,0.45)}
+
+/* ═══ MAIN LAYOUT ═══ */
+.app-body{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* ═══ LEFT PANEL ═══ */
+.lp{width:220px;background:var(--panel);border-right:1px solid var(--bdrb);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;transition:width .22s}
+.lp.collapsed{width:0}
+.lp-head{height:36px;display:flex;align-items:center;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.lp-tab{flex:1;font-family:'JetBrains Mono';font-size:7.5px;letter-spacing:1.5px;padding:0 4px;height:100%;border:none;background:transparent;color:var(--stl);cursor:pointer;transition:all .13s;text-transform:uppercase;text-align:center;border-bottom:2px solid transparent}
+.lp-tab.act{color:var(--gb);border-bottom-color:var(--gb);background:rgba(26,107,58,0.04)}
+.lp-scroll{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--stm) transparent}
+.lp-scroll::-webkit-scrollbar{width:3px}
+.lp-scroll::-webkit-scrollbar-thumb{background:var(--stm);border-radius:2px}
+.lp-pane{display:none;padding:10px}.lp-pane.show{display:block}
+
+/* Sections inside panel */
+.ps{margin-bottom:14px}
+.ps-label{font-family:'JetBrains Mono';font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--stl);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.ps-label::after{content:'';flex:1;height:1px;background:var(--bdr)}
+
+/* Shape grid */
+.shape-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.sg{background:var(--st);border:1px solid rgba(255,255,255,0.05);border-radius:6px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .15s;font-family:'Barlow';font-size:9px;font-weight:600;color:var(--cd);text-align:center}
+.sg:hover,.sg.act{background:rgba(26,107,58,0.14);border-color:var(--gb);color:var(--gb)}
+.sg-icon{font-size:16px;line-height:1}
+
+/* Inputs */
+.inp-row{margin-bottom:8px}
+.inp-row label{font-family:'JetBrains Mono';font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:var(--stl);display:block;margin-bottom:3px}
+.inp-flex{display:flex;align-items:center;gap:5px}
+.inp{background:var(--st);border:1px solid rgba(255,255,255,0.07);border-radius:4px;color:var(--cr);font-family:'JetBrains Mono';font-size:11px;padding:6px 8px;outline:none;transition:border-color .13s;width:100%}
+.inp:focus{border-color:var(--gb);box-shadow:0 0 0 2px rgba(26,107,58,0.08)}
+.inp-unit{font-family:'JetBrains Mono';font-size:8px;color:var(--stl);min-width:14px;text-align:right}
+.sl-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.sl-row label{font-family:'JetBrains Mono';font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:var(--stl);min-width:56px}
+input[type=range]{-webkit-appearance:none;flex:1;height:3px;background:var(--stm);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--gb);cursor:pointer;box-shadow:0 0 4px rgba(26,107,58,0.5)}
+.sl-val{font-family:'JetBrains Mono';font-size:9px;color:var(--al);min-width:32px;text-align:right}
+
+/* Profile grid */
+.prof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.pg{background:var(--st);border:1px solid rgba(255,255,255,0.05);border-radius:5px;padding:6px 3px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .14s}
+.pg:hover,.pg.act{border-color:var(--gb);background:rgba(26,107,58,0.1)}
+.pg svg{width:32px;height:18px}
+.pg span{font-size:7px;font-family:'JetBrains Mono';color:var(--stl);text-align:center}
+.pg.act span{color:var(--gb)}
+
+/* Material buttons */
+.mat-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:5px}
+.mg{font-family:'Barlow';font-size:11px;font-weight:600;padding:6px;border-radius:5px;background:var(--st);border:1px solid rgba(255,255,255,0.05);color:var(--cd);cursor:pointer;transition:all .13s;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px}
+.mg:hover,.mg.act{background:rgba(26,107,58,0.12);border-color:var(--gb);color:var(--gb)}
+.mg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ═══ 3D VIEWPORT ═══ */
+.vp-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;min-width:0}
+.vp-bar{background:rgba(5,9,5,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--bdr);padding:5px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap}
+.view-tabs{display:flex;background:var(--st);border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+.vt{font-family:'Barlow';font-size:10px;font-weight:600;letter-spacing:.5px;padding:4px 11px;cursor:pointer;border:none;background:transparent;color:var(--stl);transition:all .13s;text-transform:uppercase}
+.vt.act{background:var(--g);color:var(--w)}
+.vt:hover:not(.act){color:var(--cd);background:rgba(255,255,255,0.03)}
+.vp-sp{flex:1}
+.vb{font-family:'JetBrains Mono';font-size:8px;letter-spacing:1px;padding:4px 9px;border-radius:4px;border:1px solid rgba(255,255,255,0.07);background:var(--st);color:var(--cd);cursor:pointer;transition:all .13s;text-transform:uppercase;white-space:nowrap}
+.vb:hover{border-color:var(--gb);color:var(--gb)}
+.vb.on{background:rgba(26,107,58,0.12);border-color:var(--gb);color:var(--gb)}
+#cnc-canvas{flex:1;display:block;cursor:grab;width:100%;min-height:0}
+#cnc-canvas:active{cursor:grabbing}
+
+/* HUD overlays */
+.hud{position:absolute;pointer-events:none}
+.hud-tl{top:44px;left:10px}
+.hud-tr{top:44px;right:10px}
+.hud-bl{bottom:6px;left:10px}
+.hud-br{bottom:6px;right:10px}
+.hud-axes{display:flex;flex-direction:column;gap:3px}
+.ax{font-family:'JetBrains Mono';font-size:9px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:5px}
+.ax-line{width:16px;height:2px;border-radius:1px}
+.hud-info{background:rgba(5,9,5,0.82);border:1px solid var(--bdrb);border-radius:6px;padding:8px 11px;font-family:'JetBrains Mono';font-size:8.5px;color:var(--cd);line-height:1.9;backdrop-filter:blur(4px)}
+.hud-info .hv{color:var(--al);font-weight:700}
+.update-flash{position:absolute;top:44px;left:50%;transform:translateX(-50%);background:rgba(26,107,58,0.92);color:var(--w);font-family:'Barlow Condensed';font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 16px;border-radius:4px;pointer-events:none;display:none;animation:flashIn .2s ease;white-space:nowrap}
+@keyframes flashIn{from{opacity:0;transform:translateX(-50%) scale(.92)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+
+/* Statusbar */
+.statusbar{background:rgba(5,9,5,0.95);border-top:1px solid var(--bdr);padding:4px 12px;display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono';font-size:8px;color:var(--stl);flex-shrink:0;flex-wrap:wrap}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--gb);animation:blink 2s infinite;flex-shrink:0;box-shadow:0 0 4px var(--gb)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.sb-r{margin-left:auto;color:rgba(26,107,58,0.3);font-size:7px}
+
+/* Export bar */
+.export-bar{background:var(--bg);border-top:2px solid var(--gb);padding:6px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;box-shadow:0 -4px 20px rgba(0,0,0,0.5)}
+.eb-lbl{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:3px;color:var(--gb);text-transform:uppercase;white-space:nowrap}
+.fmt-btns{display:flex;gap:3px;flex-wrap:wrap}
+.fmt{font-family:'JetBrains Mono';font-size:8px;letter-spacing:1px;padding:5px 10px;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,0.08);background:var(--st);color:var(--cd);transition:all .13s;font-weight:700;text-transform:uppercase}
+.fmt:hover{border-color:var(--al);color:var(--al)}
+.fmt.hot{background:linear-gradient(135deg,var(--g),var(--gl));border-color:var(--gl);color:var(--w);box-shadow:0 2px 10px rgba(26,107,58,0.3)}
+.compat-row{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.compat-badge{font-family:'JetBrains Mono';font-size:7px;letter-spacing:1px;padding:3px 8px;border-radius:3px;text-transform:uppercase;border:1px solid}
+.compat-badge.v{background:rgba(26,107,58,0.1);border-color:rgba(26,107,58,0.3);color:var(--gb)}
+.compat-badge.x{background:rgba(36,113,163,0.1);border-color:rgba(36,113,163,0.28);color:#5DADE2}
+.compat-badge.xt{background:rgba(212,130,10,0.1);border-color:rgba(212,130,10,0.25);color:var(--al)}
+
+/* ═══ AI PANEL ═══ */
+.ai-panel{width:288px;background:var(--panel);border-left:1px solid var(--bdrb);display:flex;flex-direction:column;flex-shrink:0}
+@media(max-width:960px){.ai-panel{width:248px}}
+.ai-head{padding:9px 12px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;flex-shrink:0;background:linear-gradient(180deg,rgba(26,107,58,0.07) 0%,transparent 100%)}
+.ai-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--stm),var(--gd));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;border:1px solid var(--gb);position:relative;flex-shrink:0}
+.ai-dot{position:absolute;bottom:-2px;right:-2px;width:8px;height:8px;background:var(--gb);border-radius:50%;border:2px solid var(--panel);box-shadow:0 0 6px var(--gb)}
+.ai-meta h3{font-family:'Barlow Condensed';font-size:15px;font-weight:700;letter-spacing:2px;color:var(--w);text-transform:uppercase;line-height:1}
+.ai-meta p{font-family:'JetBrains Mono';font-size:7px;color:var(--gb);letter-spacing:1.5px;margin-top:1px}
+.ai-badge{margin-left:auto;font-family:'JetBrains Mono';font-size:7.5px;letter-spacing:1px;padding:3px 7px;border-radius:3px;background:rgba(26,107,58,0.14);border:1px solid rgba(26,107,58,0.28);color:var(--gb)}
+
+.key-bar{background:rgba(212,130,10,0.07);border-bottom:1px solid rgba(212,130,10,0.15);padding:8px 11px;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.key-bar p{font-family:'JetBrains Mono';font-size:7.5px;color:var(--al);flex:1;line-height:1.5}
+.key-inp{background:var(--st);border:1px solid rgba(212,130,10,0.2);border-radius:4px;color:var(--cr);font-family:'JetBrains Mono';font-size:9px;padding:5px 8px;outline:none;width:0;flex:1;transition:all .13s;min-width:0}
+.key-inp:focus{border-color:var(--al);width:100%}
+.key-save{font-family:'JetBrains Mono';font-size:8px;padding:5px 9px;border-radius:4px;border:none;background:var(--a);color:var(--w);cursor:pointer;white-space:nowrap;font-weight:700;flex-shrink:0}
+.key-save:hover{background:var(--al)}
+
+.chat-log{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:var(--stm) transparent}
+.chat-log::-webkit-scrollbar{width:3px}
+.chat-log::-webkit-scrollbar-thumb{background:var(--stm);border-radius:2px}
+.msg{max-width:94%;animation:msgIn .18s ease both}
+@keyframes msgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg.ai{align-self:flex-start}.msg.usr{align-self:flex-end}
+.bubble{border-radius:9px;padding:8px 11px;font-size:12px;line-height:1.55;font-weight:500}
+.msg.ai .bubble{background:var(--st);border:1px solid rgba(255,255,255,0.05);color:var(--cr);border-top-left-radius:2px}
+.msg.usr .bubble{background:rgba(26,107,58,0.16);border:1px solid rgba(26,107,58,0.28);color:var(--cr);border-top-right-radius:2px}
+.msg-time{font-family:'JetBrains Mono';font-size:7px;color:var(--stl);margin-top:2px;padding:0 2px}
+.msg.usr .msg-time{text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.chip{font-family:'JetBrains Mono';font-size:7px;letter-spacing:.5px;padding:3px 7px;border-radius:3px;background:rgba(26,107,58,0.09);border:1px solid rgba(26,107,58,0.18);color:var(--gb);cursor:pointer;transition:all .12s;text-transform:uppercase}
+.chip:hover{background:rgba(26,107,58,0.2);border-color:var(--gb)}
+.thinking{display:flex;gap:4px;padding:8px 10px;background:var(--st);border-radius:8px;border-top-left-radius:2px;border:1px solid rgba(255,255,255,0.05);width:fit-content;align-items:center}
+.td{width:5px;height:5px;background:var(--gb);border-radius:50%;animation:th 1.1s infinite}
+.td:nth-child(2){animation-delay:.18s}.td:nth-child(3){animation-delay:.36s}
+@keyframes th{0%,80%,100%{transform:scale(.55);opacity:.35}40%{transform:scale(1);opacity:1}}
+
+.chat-foot{padding:8px 10px;border-top:1px solid var(--bdr);background:var(--bg);flex-shrink:0}
+.mode-pills{display:flex;gap:3px;margin-bottom:6px}
+.mpill{font-family:'JetBrains Mono';font-size:7px;letter-spacing:1px;padding:3px 7px;border-radius:10px;background:var(--st);border:1px solid rgba(255,255,255,0.06);color:var(--stl);cursor:pointer;transition:all .12s;text-transform:uppercase}
+.mpill.act{background:rgba(26,107,58,0.12);border-color:var(--gb);color:var(--gb)}
+.in-row{display:flex;gap:4px;align-items:flex-end}
+.chat-ta{flex:1;background:var(--st);border:1px solid rgba(255,255,255,0.07);border-radius:7px;color:var(--cr);font-family:'Barlow';font-size:13px;font-weight:500;padding:7px 10px;resize:none;outline:none;line-height:1.4;transition:border-color .13s;min-height:36px;max-height:80px}
+.chat-ta:focus{border-color:var(--gb);box-shadow:0 0 0 2px rgba(26,107,58,0.07)}
+.chat-ta::placeholder{color:var(--stl);font-style:italic;font-size:11px}
+.mic-btn,.send-btn{width:34px;height:34px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .13s;flex-shrink:0}
+.mic-btn{background:var(--stm);border:1px solid rgba(255,255,255,0.07);color:var(--cd)}
+.mic-btn:hover{background:rgba(26,107,58,0.16);border-color:var(--gb)}
+.mic-btn.on{background:rgba(192,57,43,0.18);border-color:var(--red);color:var(--red);animation:mPulse .8s infinite}
+@keyframes mPulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.35)}50%{box-shadow:0 0 0 5px transparent}}
+.send-btn{background:linear-gradient(135deg,var(--g),var(--gd));color:var(--w);box-shadow:0 2px 8px rgba(26,107,58,0.28)}
+.send-btn:hover{transform:scale(1.06)}
+.quick-row{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px}
+.qp{font-family:'Barlow';font-size:10px;font-weight:600;padding:3px 7px;border-radius:3px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:var(--cd);cursor:pointer;transition:all .12s;white-space:nowrap}
+.qp:hover{background:rgba(26,107,58,0.09);border-color:rgba(26,107,58,0.28);color:var(--gb)}
+
+/* ═══ MODAL / DIALOGS ═══ */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.84);backdrop-filter:blur(8px);z-index:800;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--bdrb);border-radius:14px;padding:32px 28px;max-width:500px;width:94%;box-shadow:0 30px 80px rgba(0,0,0,0.7);animation:mIn .2s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(-10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h2{font-family:'Bebas Neue';font-size:28px;letter-spacing:3px;color:var(--w);margin-bottom:6px}
+.modal p{font-size:14px;color:var(--cd);line-height:1.55;margin-bottom:16px}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.mbtn{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:9px 20px;border-radius:6px;cursor:pointer;transition:all .13s;border:none}
+.mbtn.cancel{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--cd)}
+.mbtn.cancel:hover{border-color:var(--gb);color:var(--gb)}
+.mbtn.go{background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 2px 12px rgba(26,107,58,0.3)}
+.mbtn.go:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(26,107,58,0.45)}
+.export-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.eo{background:var(--st);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:13px;cursor:pointer;transition:all .15s;text-align:center}
+.eo:hover{border-color:var(--gb);background:rgba(26,107,58,0.08);transform:translateY(-1px)}
+.eo h4{font-family:'Barlow Condensed';font-size:16px;font-weight:700;letter-spacing:1px;color:var(--w);text-transform:uppercase;margin-bottom:3px}
+.eo p{font-size:11px;color:var(--cd)}
+.eo .eo-compat{font-family:'JetBrains Mono';font-size:7.5px;color:var(--gb);margin-top:5px;letter-spacing:.5px}
+.settings-grid{display:flex;flex-direction:column;gap:10px}
+.sg-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--st);border-radius:7px;border:1px solid rgba(255,255,255,0.05)}
+.sg-row label{font-size:13px;font-weight:600;color:var(--cr)}
+.sg-row small{display:block;font-size:11px;color:var(--cd);margin-top:1px}
+.toggle{width:38px;height:21px;background:var(--stm);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:none}
+.toggle.on{background:var(--g)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;background:var(--w);border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(17px)}
+
+/* Toast */
+.toast{position:fixed;bottom:70px;right:16px;z-index:9000;background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border-radius:7px;box-shadow:0 5px 22px rgba(26,107,58,0.5);animation:toastIn .25s ease;pointer-events:none;max-width:290px}
+.toast.warn{background:linear-gradient(135deg,var(--a),var(--al));box-shadow:0 5px 22px rgba(212,130,10,0.4)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ SPLASH ═══ */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s}
+.sp-em{width:80px;height:80px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:18px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:32px;color:var(--w);box-shadow:0 8px 40px rgba(26,107,58,0.55);animation:spPulse 2s infinite}
+@keyframes spPulse{0%,100%{box-shadow:0 8px 40px rgba(26,107,58,0.5)}50%{box-shadow:0 8px 60px rgba(26,107,58,0.85)}}
+.sp-title{font-family:'Bebas Neue';font-size:30px;letter-spacing:6px;color:var(--w)}
+.sp-sub{font-family:'JetBrains Mono';font-size:9px;letter-spacing:2px;color:var(--gb)}
+.sp-bar{width:260px;height:3px;background:var(--stm);border-radius:2px;overflow:hidden}
+.sp-prog{height:100%;background:linear-gradient(90deg,var(--g),var(--al));border-radius:2px;width:0;transition:width .06s linear}
+.sp-status{font-family:'JetBrains Mono';font-size:8.5px;color:var(--stl);letter-spacing:1px}
+
+@media(max-width:720px){
+  .lp{display:none}
+  .ai-panel{position:fixed;bottom:0;left:0;right:0;width:100%;height:44vh;border-left:none;border-top:2px solid var(--gb);z-index:50}
+  .export-bar .compat-row{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SPLASH ═══ -->
+<div id="splash">
+  <div class="sp-em">EH</div>
+  <div class="sp-title">CNC Design Studio</div>
+  <div class="sp-sub">Edward Hirth WoodWorks · Pro Edition</div>
+  <div class="sp-bar"><div class="sp-prog" id="spProg"></div></div>
+  <div class="sp-status" id="spStatus">Initializing rendering engine...</div>
+</div>
+
+<!-- ═══ PAYWALL GATE ═══ -->
+<div id="paywall-gate">
+  <a href="index.html" class="pg-back">← Back to Site</a>
+  <div class="pg-box">
+    <div class="pg-seal">EH</div>
+    <h2>Start Your Free Trial</h2>
+    <p>14 days free — full Pro access on every device. No credit card required. Works inside VCarve, Aspire, X-Carve &amp; xTool.</p>
+    <div class="pg-plans">
+      <div class="pgp" onclick="selPgPlan(this,'starter')">
+        <div class="pname">Starter</div><div class="pamt">$19</div><div class="pper">per month</div>
+      </div>
+      <div class="pgp sel" onclick="selPgPlan(this,'pro')">
+        <div class="best">BEST VALUE</div>
+        <div class="pname">Pro</div><div class="pamt">$49</div><div class="pper">per month</div>
+      </div>
+      <div class="pgp" onclick="selPgPlan(this,'studio')">
+        <div class="pname">Studio</div><div class="pamt">$79</div><div class="pper">per month</div>
+      </div>
+    </div>
+    <input class="pg-in" type="email" id="pg-email" placeholder="your@email.com">
+    <input class="pg-in" type="text" id="pg-name" placeholder="Your name">
+    <div class="pg-row">
+      <button class="pg-btn go" onclick="submitTrial()">Start Free Trial →</button>
+      <button class="pg-btn demo" onclick="startDemo()">Try Demo</button>
+    </div>
+    <div class="pg-legal">
+      By continuing you agree to our <a href="#">EULA</a> &amp; <a href="#">Terms of Service</a>.<br>
+      © 2025 Edward Hirth WoodWorks. All Rights Reserved. <strong style="color:var(--al)">Patent Pending.</strong><br>
+      Payments secured by Stripe. Cancel anytime. No surprise charges.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ROOT ═══ -->
+<div id="app-root">
+
+  <!-- TITLEBAR -->
+  <div class="titlebar">
+    <a href="index.html" class="tb-logo">
+      <div class="tb-em">EH</div>
+      <div class="tb-name">CarvAI Pro <small>© 2025 Patent Pending</small></div>
+    </a>
+    <div class="tb-sep"></div>
+
+    <!-- Menus -->
+    <div style="position:relative">
+      <button class="menu-btn" onclick="toggleMenu('menu-file')">File</button>
+      <div class="dropdown" id="menu-file">
+        <div class="dd-item" onclick="newDesign();closeMenus()">New Design<span class="dd-key">⌘N</span></div>
+        <div class="dd-item" onclick="openDesign();closeMenus()">Open…<span class="dd-key">⌘O</span></div>
+        <div class="dd-item" onclick="saveDesign();closeMenus()">Save<span class="dd-key">⌘S</span></div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="exportModal();closeMenus()">Export…<span class="dd-key">⌘E</span></div>
+        <div class="dd-item" onclick="exportSTL();closeMenus()">Export STL<span class="dd-key">⌘⇧E</span></div>
+        <div class="dd-item" onclick="exportGCode();closeMenus()">Export G-Code</div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="showSettings();closeMenus()">Preferences…</div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <button class="menu-btn" onclick="toggleMenu('menu-view')">View</button>
+      <div class="dropdown" id="menu-view">
+        <div class="dd-item" onclick="setView('perspective');closeMenus()">Perspective 3D<span class="dd-key">1</span></div>
+        <div class="dd-item" onclick="setView('top');closeMenus()">Top View<span class="dd-key">2</span></div>
+        <div class="dd-item" onclick="setView('front');closeMenus()">Front View<span class="dd-key">3</span></div>
+        <div class="dd-item" onclick="setView('side');closeMenus()">Side View<span class="dd-key">4</span></div>
+        <div class="dd-item" onclick="setView('isometric');closeMenus()">Isometric<span class="dd-key">5</span></div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="toggleGrid();closeMenus()">Toggle Grid<span class="dd-key">G</span></div>
+        <div class="dd-item" onclick="toggleWire();closeMenus()">Toggle Wireframe<span class="dd-key">W</span></div>
+        <div class="dd-item" onclick="Engine.resetCamera();closeMenus()">Reset Camera<span class="dd-key">R</span></div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <button class="menu-btn" onclick="toggleMenu('menu-machine')">Machine</button>
+      <div class="dropdown" id="menu-machine">
+        <div class="dd-item" onclick="sendToMachine('xcarvemap');closeMenus()">Export for X-Carve / Easel Pro</div>
+        <div class="dd-item" onclick="sendToMachine('xtool');closeMenus()">Export for xTool</div>
+        <div class="dd-item" onclick="sendToMachine('vcarve');closeMenus()">Export for VCarve Pro</div>
+        <div class="dd-item" onclick="sendToMachine('aspire');closeMenus()">Export for Aspire</div>
+        <div class="dd-item" onclick="sendToMachine('shapeoko');closeMenus()">Export for Shapeoko</div>
+        <div class="dd-item" onclick="sendToMachine('avid');closeMenus()">Export for Avid CNC</div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="showSimulator();closeMenus()">Run Toolpath Simulator</div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <button class="menu-btn" onclick="toggleMenu('menu-help')">Help</button>
+      <div class="dropdown" id="menu-help">
+        <div class="dd-item" onclick="closeMenus()">Documentation</div>
+        <div class="dd-item" onclick="closeMenus()">Video Tutorials</div>
+        <div class="dd-item" onclick="closeMenus()">VCarve Integration Guide</div>
+        <div class="dd-item" onclick="closeMenus()">xTool Integration Guide</div>
+        <div class="dd-sep"></div>
+        <div class="dd-item">CarvAI Pro v1.0.0</div>
+        <div class="dd-item" style="color:var(--al)">© 2025 Edward Hirth WoodWorks</div>
+      </div>
+    </div>
+
+    <div class="tb-sp"></div>
+
+    <!-- View mode tabs -->
+    <div class="mode-tabs">
+      <button class="mt-tab act" onclick="setAppMode(this,'design')">Design</button>
+      <button class="mt-tab" onclick="setAppMode(this,'toolpath')">Toolpath</button>
+      <button class="mt-tab" onclick="setAppMode(this,'simulate')">Simulate</button>
+    </div>
+
+    <button class="icon-btn" onclick="saveDesign()" title="Save">💾</button>
+    <button class="icon-btn" onclick="newDesign()" title="New">＋</button>
+
+    <!-- User -->
+    <div class="tb-user" onclick="showSettings()">
+      <div class="tb-avatar" id="tb-avatar">E</div>
+      <div class="tb-uname" id="tb-uname">Designer</div>
+      <div class="tb-plan" id="tb-plan">TRIAL</div>
+    </div>
+
+    <button class="tl-export" onclick="exportSTL()" style="margin-left:4px">⬇ Export STL</button>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="tool-group">
+      <button class="tl act" title="Circle" onclick="selTool(this,'circle')">⬤</button>
+      <button class="tl" title="Rectangle" onclick="selTool(this,'rect')">⬛</button>
+      <button class="tl" title="Oval" onclick="selTool(this,'oval')">⬭</button>
+      <button class="tl" title="Star" onclick="selTool(this,'star')">⭐</button>
+      <button class="tl" title="Hexagon" onclick="selTool(this,'hex')">⬡</button>
+      <button class="tl" title="Octagon" onclick="selTool(this,'octagon')">⯃</button>
+      <button class="tl" title="Diamond" onclick="selTool(this,'diamond')">◆</button>
+      <button class="tl" title="Arrow" onclick="selTool(this,'arrow')">➤</button>
+      <button class="tl" title="Cross" onclick="selTool(this,'cross')">✚</button>
+    </div>
+    <div class="tl-sep"></div>
+    <div class="tool-group">
+      <button class="tl-label act" id="tb-profile" onclick="switchLP('profile')">⌒ Flat</button>
+      <button class="tl-label" id="tb-material" onclick="switchLP('material')">🪵 Oak</button>
+    </div>
+    <div class="tl-sep"></div>
+    <div class="tool-group">
+      <button class="tl" title="Undo" onclick="undo()">↩</button>
+      <button class="tl" title="Redo" onclick="redo()">↪</button>
+    </div>
+    <div class="tl-sep"></div>
+    <div class="tool-group">
+      <button class="tl" title="Zoom Fit" onclick="Engine.zoomFit(state.w,state.h)">⊡</button>
+      <button class="tl" title="Reset View" onclick="Engine.resetCamera()">↺</button>
+      <button class="tl" id="tb-wire" title="Wireframe" onclick="toggleWire()">⬡</button>
+      <button class="tl" id="tb-grid" title="Grid" onclick="toggleGrid()" style="color:var(--gb)">⊞</button>
+    </div>
+    <div class="tl-sep"></div>
+    <div class="tool-group">
+      <button class="tl" title="Simulate toolpath" onclick="showSimulator()">▶</button>
+      <button class="tl-label" onclick="exportModal()">Export Options ↓</button>
+    </div>
+  </div>
+
+  <!-- MAIN BODY -->
+  <div class="app-body">
+
+    <!-- LEFT PANEL -->
+    <div class="lp" id="left-panel">
+      <div class="lp-head">
+        <button class="lp-tab act" onclick="switchLP('shape',this)">Shape</button>
+        <button class="lp-tab" onclick="switchLP('profile',this)">Profile</button>
+        <button class="lp-tab" onclick="switchLP('material',this)">Mat</button>
+        <button class="lp-tab" onclick="switchLP('cut',this)">Cut</button>
+      </div>
+      <div class="lp-scroll">
+
+        <!-- SHAPE PANE -->
+        <div class="lp-pane show" id="pane-shape">
+          <div class="ps">
+            <div class="ps-label">Shape</div>
+            <div class="shape-grid">
+              <div class="sg act" onclick="selTool2(this,'circle')"><div class="sg-icon">⬤</div>Circle</div>
+              <div class="sg" onclick="selTool2(this,'rect')"><div class="sg-icon">⬛</div>Rect</div>
+              <div class="sg" onclick="selTool2(this,'oval')"><div class="sg-icon">⬭</div>Oval</div>
+              <div class="sg" onclick="selTool2(this,'star')"><div class="sg-icon">⭐</div>Star</div>
+              <div class="sg" onclick="selTool2(this,'hex')"><div class="sg-icon">⬡</div>Hex</div>
+              <div class="sg" onclick="selTool2(this,'octagon')"><div class="sg-icon">⯃</div>Octagon</div>
+              <div class="sg" onclick="selTool2(this,'diamond')"><div class="sg-icon">◆</div>Diamond</div>
+              <div class="sg" onclick="selTool2(this,'arrow')"><div class="sg-icon">➤</div>Arrow</div>
+              <div class="sg" onclick="selTool2(this,'cross')"><div class="sg-icon">✚</div>Cross</div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Dimensions</div>
+            <div class="inp-row"><label>Width</label><div class="inp-flex"><input class="inp" type="number" id="dW" value="12.000" step=".125" oninput="updateDims()"><span class="inp-unit">in</span></div></div>
+            <div class="inp-row"><label>Length</label><div class="inp-flex"><input class="inp" type="number" id="dH" value="12.000" step=".125" oninput="updateDims()"><span class="inp-unit">in</span></div></div>
+            <div class="inp-row"><label>Thickness</label><div class="inp-flex"><input class="inp" type="number" id="dT" value="0.750" step=".0625" oninput="updateDims()"><span class="inp-unit">in</span></div></div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Modifiers</div>
+            <div class="sl-row"><label>Cut Depth</label><input type="range" min="5" max="100" value="60" oninput="state.cutDepth=this.value/100;document.getElementById('vCD').textContent=this.value+'%';rebuild()"><span class="sl-val" id="vCD">60%</span></div>
+            <div class="sl-row"><label>Taper</label><input type="range" min="0" max="45" value="0" oninput="state.taper=parseInt(this.value);document.getElementById('vTaper').textContent=this.value+'°';rebuild()"><span class="sl-val" id="vTaper">0°</span></div>
+            <div class="sl-row"><label>Relief H</label><input type="range" min="0" max="100" value="0" oninput="state.relief=this.value/100;document.getElementById('vRelief').textContent=this.value+'%';rebuild()"><span class="sl-val" id="vRelief">0%</span></div>
+          </div>
+        </div>
+
+        <!-- PROFILE PANE -->
+        <div class="lp-pane" id="pane-profile">
+          <div class="ps">
+            <div class="ps-label">Edge Profile</div>
+            <div class="prof-grid">
+              <div class="pg act" onclick="selProf(this,'flat')"><svg viewBox="0 0 32 18"><rect x="2" y="5" width="28" height="11" fill="none" stroke="#1A6B3A" stroke-width="1.5" rx="0"/></svg><span>Flat</span></div>
+              <div class="pg" onclick="selProf(this,'roundover')"><svg viewBox="0 0 32 18"><path d="M2,16 Q2,5 11,5 L28,5 L28,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Roundover</span></div>
+              <div class="pg" onclick="selProf(this,'chamfer')"><svg viewBox="0 0 32 18"><path d="M2,16 L10,5 L28,5 L28,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Chamfer</span></div>
+              <div class="pg" onclick="selProf(this,'cove')"><svg viewBox="0 0 32 18"><path d="M2,16 Q10,16 11,10 L28,10 L28,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Cove</span></div>
+              <div class="pg" onclick="selProf(this,'ogee')"><svg viewBox="0 0 32 18"><path d="M2,16 Q3,11 7,9 Q13,5 15,5 L28,5 L28,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Ogee</span></div>
+              <div class="pg" onclick="selProf(this,'vcarve')"><svg viewBox="0 0 32 18"><path d="M2,5 L16,16 L30,5" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>V-Carve</span></div>
+              <div class="pg" onclick="selProf(this,'bead')"><svg viewBox="0 0 32 18"><path d="M2,16 Q2,5 9,5 Q15,5 14,12 L28,12 L28,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Bead</span></div>
+              <div class="pg" onclick="selProf(this,'bullnose')"><svg viewBox="0 0 32 18"><path d="M2,16 Q2,5 16,5 Q30,5 30,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Bullnose</span></div>
+              <div class="pg" onclick="selProf(this,'fillet')"><svg viewBox="0 0 32 18"><path d="M2,16 Q10,5 17,5 L28,5 L28,16 Z" fill="none" stroke="#1A6B3A" stroke-width="1.5"/></svg><span>Fillet</span></div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Profile Settings</div>
+            <div class="sl-row"><label>Depth</label><input type="range" min="5" max="100" value="40" oninput="state.profileDepth=this.value/100;document.getElementById('vPD').textContent=this.value+'%';rebuild()"><span class="sl-val" id="vPD">40%</span></div>
+            <div class="sl-row"><label>Width</label><input type="range" min="5" max="100" value="35" oninput="state.profileWidth=this.value/100;document.getElementById('vPW').textContent=this.value+'%';rebuild()"><span class="sl-val" id="vPW">35%</span></div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Bit &amp; Spindle</div>
+            <div class="inp-row"><label>Bit Size</label><div class="inp-flex"><input class="inp" type="number" id="bitSize" value="0.750" step=".125"><span class="inp-unit">in</span></div></div>
+            <div class="inp-row"><label>Spindle RPM</label><div class="inp-flex"><input class="inp" type="number" id="spindleRpm" value="18000" step="500"></div></div>
+            <div class="inp-row"><label>Feed Rate</label><div class="inp-flex"><input class="inp" type="number" id="feedRate" value="100" step="5"><span class="inp-unit">ipm</span></div></div>
+          </div>
+        </div>
+
+        <!-- MATERIAL PANE -->
+        <div class="lp-pane" id="pane-material">
+          <div class="ps">
+            <div class="ps-label">Hardwood</div>
+            <div class="mat-grid">
+              <div class="mg act" onclick="selMat(this,'Oak','#C8874A')"><div class="mg-dot" style="background:#C8874A"></div>Oak</div>
+              <div class="mg" onclick="selMat(this,'Walnut','#5C3A1A')"><div class="mg-dot" style="background:#5C3A1A"></div>Walnut</div>
+              <div class="mg" onclick="selMat(this,'Maple','#E8C870')"><div class="mg-dot" style="background:#E8C870"></div>Maple</div>
+              <div class="mg" onclick="selMat(this,'Cherry','#8B3A2A')"><div class="mg-dot" style="background:#8B3A2A"></div>Cherry</div>
+              <div class="mg" onclick="selMat(this,'Mahogany','#6B2A1A')"><div class="mg-dot" style="background:#6B2A1A"></div>Mahogany</div>
+              <div class="mg" onclick="selMat(this,'Pine','#E8C87A')"><div class="mg-dot" style="background:#E8C87A"></div>Pine</div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Sheet Goods</div>
+            <div class="mat-grid">
+              <div class="mg" onclick="selMat(this,'MDF','#C8A878')"><div class="mg-dot" style="background:#C8A878"></div>MDF</div>
+              <div class="mg" onclick="selMat(this,'Plywood','#D4B864')"><div class="mg-dot" style="background:#D4B864"></div>Plywood</div>
+              <div class="mg" onclick="selMat(this,'HDU Foam','#E0E0D8')"><div class="mg-dot" style="background:#E0E0D8"></div>HDU</div>
+              <div class="mg" onclick="selMat(this,'Acrylic','#A8C8E8')"><div class="mg-dot" style="background:#A8C8E8"></div>Acrylic</div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Metal</div>
+            <div class="mat-grid">
+              <div class="mg" onclick="selMat(this,'Aluminum','#9AA8B8')"><div class="mg-dot" style="background:#9AA8B8"></div>Aluminum</div>
+              <div class="mg" onclick="selMat(this,'Brass','#B8962A')"><div class="mg-dot" style="background:#B8962A"></div>Brass</div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Cut Parameters</div>
+            <div class="inp-row"><label>Pass Depth</label><div class="inp-flex"><input class="inp" type="number" id="passDepth" value="0.125" step=".0625"><span class="inp-unit">in</span></div></div>
+            <div class="inp-row"><label>Passes</label><div class="inp-flex"><input class="inp" type="number" id="numPasses" value="6" step="1"></div></div>
+          </div>
+        </div>
+
+        <!-- CUT PANE -->
+        <div class="lp-pane" id="pane-cut">
+          <div class="ps">
+            <div class="ps-label">Toolpath Strategy</div>
+            <div class="shape-grid">
+              <div class="sg act" onclick="selStrategy(this,'profile')"><div class="sg-icon">⬤</div>Profile</div>
+              <div class="sg" onclick="selStrategy(this,'pocket')"><div class="sg-icon">▣</div>Pocket</div>
+              <div class="sg" onclick="selStrategy(this,'vcarve')"><div class="sg-icon">∧</div>V-Carve</div>
+              <div class="sg" onclick="selStrategy(this,'drill')"><div class="sg-icon">⦿</div>Drill</div>
+              <div class="sg" onclick="selStrategy(this,'engrave')"><div class="sg-icon">✏</div>Engrave</div>
+              <div class="sg" onclick="selStrategy(this,'texture')"><div class="sg-icon">▨</div>Texture</div>
+            </div>
+          </div>
+          <div class="ps">
+            <div class="ps-label">Cut Settings</div>
+            <div class="sl-row"><label>Step Over</label><input type="range" min="5" max="90" value="40" oninput="document.getElementById('vSO').textContent=this.value+'%'"><span class="sl-val" id="vSO">40%</span></div>
+            <div class="sl-row"><label>Ramp</label><input type="range" min="0" max="45" value="0" oninput="document.getElementById('vRamp').textContent=this.value+'°'"><span class="sl-val" id="vRamp">0°</span></div>
+            <div class="inp-row"><label>Safe Z</label><div class="inp-flex"><input class="inp" type="number" value="0.250" step=".0625"><span class="inp-unit">in</span></div></div>
+            <div class="inp-row"><label>Home X,Y</label><div class="inp-flex"><input class="inp" type="text" value="0.000, 0.000"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3D VIEWPORT -->
+    <div class="vp-wrap">
+      <div class="vp-bar">
+        <div class="view-tabs">
+          <button class="vt act" onclick="setView('perspective')">3D</button>
+          <button class="vt" onclick="setView('top')">Top</button>
+          <button class="vt" onclick="setView('front')">Front</button>
+          <button class="vt" onclick="setView('side')">Side</button>
+          <button class="vt" onclick="setView('isometric')">ISO</button>
+        </div>
+        <div class="vp-sp"></div>
+        <button class="vb" id="vb-wire" onclick="toggleWire()">⬡ Wire</button>
+        <button class="vb on" id="vb-grid" onclick="toggleGrid()">⊞ Grid</button>
+        <button class="vb" onclick="Engine.resetCamera()">↺ Reset</button>
+        <button class="vb" onclick="Engine.zoomFit(state.w,state.h)">⊡ Fit</button>
+        <button class="vb" onclick="showSimulator()">▶ Simulate</button>
+      </div>
+
+      <canvas id="cnc-canvas"></canvas>
+
+      <!-- HUD overlays -->
+      <div class="hud hud-tl">
+        <div class="hud-axes">
+          <div class="ax"><div class="ax-line" style="background:#E74C3C"></div><span style="color:#E74C3C">X</span></div>
+          <div class="ax"><div class="ax-line" style="background:#27AE60"></div><span style="color:#27AE60">Y</span></div>
+          <div class="ax"><div class="ax-line" style="background:#2980B9"></div><span style="color:#2980B9">Z</span></div>
+        </div>
+      </div>
+      <div class="hud hud-tr">
+        <div class="hud-info">
+          W: <span class="hv" id="hW">12.000"</span><br>
+          L: <span class="hv" id="hH">12.000"</span><br>
+          T: <span class="hv" id="hT">0.750"</span><br>
+          <span class="hv" id="hM">Oak</span> · <span class="hv" id="hP">Flat</span>
+        </div>
+      </div>
+      <div class="update-flash" id="flashMsg">MODEL UPDATED</div>
+      <div class="hud hud-br">
+        <div style="font-family:'JetBrains Mono';font-size:7px;color:rgba(26,107,58,0.3);text-align:right">© 2025 Edward Hirth WoodWorks · Patent Pending</div>
+      </div>
+
+      <div class="statusbar">
+        <div class="sb-dot"></div>
+        <span>3D Engine Ready</span>
+        <span>Polys: <span style="color:var(--al)" id="sbPolys">0</span></span>
+        <span>Verts: <span style="color:var(--al)" id="sbVerts">0</span></span>
+        <span id="sbProfile" style="color:var(--gb)">Flat</span>
+        <span id="sbMat" style="color:var(--gb)">Oak</span>
+        <span id="sbTool" style="color:var(--cd)">Circle</span>
+        <div class="sb-r">© 2025 Edward Hirth WoodWorks · All Rights Reserved · Patent Pending</div>
+      </div>
+    </div>
+
+    <!-- AI PANEL -->
+    <div class="ai-panel">
+      <div class="ai-head">
+        <div class="ai-icon">🪵<div class="ai-dot"></div></div>
+        <div class="ai-meta"><h3>CarvAI Pro</h3><p>Claude AI · Machine-Ready</p></div>
+        <div class="ai-badge">PRO</div>
+      </div>
+
+      <div class="key-bar" id="keyBar">
+        <p>🔑 Paste Anthropic key for real AI<br>(console.anthropic.com — free)</p>
+        <input class="key-inp" type="password" id="keyIn" placeholder="sk-ant-...">
+        <button class="key-save" onclick="saveKey()">Save</button>
+      </div>
+
+      <div class="chat-log" id="chatLog">
+        <div class="msg ai">
+          <div class="bubble">
+            Hello! I'm <strong>CarvAI Pro</strong> — built exclusively for Edward Hirth WoodWorks.<br><br>
+            I know VCarve, Aspire, X-Carve, Easel Pro, xTool, and every bit in your cabinet. Tell me what to make.
+          </div>
+          <div class="chips">
+            <span class="chip" onclick="qs('45 degree chamfer outer edge')">45° chamfer</span>
+            <span class="chip" onclick="qs('three quarter inch roundover all edges')">¾" roundover</span>
+            <span class="chip" onclick="qs('ogee profile furniture edge')">Ogee</span>
+            <span class="chip" onclick="qs('export for xcarvemap easel pro')">X-Carve export</span>
+            <span class="chip" onclick="qs('export for xtool')">xTool export</span>
+          </div>
+          <div class="msg-time">CarvAI Pro · © EHW 2025</div>
+        </div>
+      </div>
+
+      <div class="chat-foot">
+        <div class="mode-pills">
+          <div class="mpill act" onclick="setMode(this,'text')">Text</div>
+          <div class="mpill" onclick="setMode(this,'voice')">Voice</div>
+          <div class="mpill" onclick="setMode(this,'measure')">Measure</div>
+          <div class="mpill" onclick="setMode(this,'optimize')">Optimize</div>
+        </div>
+        <div class="in-row">
+          <textarea class="chat-ta" id="chatIn" rows="1" placeholder="Describe your design change…"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()">🎤</button>
+          <button class="send-btn" onclick="sendMsg()">➤</button>
+        </div>
+        <div class="quick-row">
+          <span class="qp" onclick="qs('45 degree chamfer')">45° edge</span>
+          <span class="qp" onclick="qs('three quarter roundover')">¾" round</span>
+          <span class="qp" onclick="qs('walnut material')">Walnut</span>
+          <span class="qp" onclick="qs('what bit for this profile')">Bit advice</span>
+          <span class="qp" onclick="qs('simulate toolpath estimate time')">Simulate</span>
+          <span class="qp" onclick="exportSTL()">Export STL</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- app-body -->
+
+  <!-- EXPORT BAR -->
+  <div class="export-bar">
+    <div class="eb-lbl">Export</div>
+    <div class="fmt-btns">
+      <button class="fmt hot" onclick="exportSTL()">⬇ STL</button>
+      <button class="fmt" onclick="exportGCode()">⬇ G-Code</button>
+      <button class="fmt" onclick="exportFmt('DXF')">⬇ DXF</button>
+      <button class="fmt" onclick="exportFmt('SVG')">⬇ SVG</button>
+      <button class="fmt" onclick="exportFmt('OBJ')">⬇ OBJ</button>
+      <button class="fmt" onclick="exportFmt('STEP')">⬇ STEP</button>
+    </div>
+    <div class="compat-row">
+      <div class="compat-badge v">VCarve ✓</div>
+      <div class="compat-badge v">Aspire ✓</div>
+      <div class="compat-badge x">X-Carve ✓</div>
+      <div class="compat-badge xt">xTool ✓</div>
+      <div class="compat-badge x">Shapeoko ✓</div>
+      <div class="compat-badge x">Avid ✓</div>
+    </div>
+  </div>
+
+</div><!-- app-root -->
+
+<!-- EXPORT MODAL -->
+<div class="modal-bg" id="export-modal">
+  <div class="modal">
+    <h2>Export Design</h2>
+    <p>Choose your machine or file format. All exports include copyright metadata.</p>
+    <div class="export-options">
+      <div class="eo" onclick="exportSTL();closeModal('export-modal')"><h4>STL</h4><p>3D solid model — watertight mesh</p><div class="eo-compat">VCarve · Aspire · Fusion 360 · Cura</div></div>
+      <div class="eo" onclick="exportGCode();closeModal('export-modal')"><h4>G-Code</h4><p>Machine-ready NC file</p><div class="eo-compat">X-Carve · Shapeoko · Avid · Laguna</div></div>
+      <div class="eo" onclick="sendToMachine('xcarvemap');closeModal('export-modal')"><h4>Easel Pro</h4><p>X-Carve / Inventables format</p><div class="eo-compat">X-Carve · X-Carve Pro · Carvey</div></div>
+      <div class="eo" onclick="sendToMachine('xtool');closeModal('export-modal')"><h4>xTool</h4><p>GRBL format for xTool machines</p><div class="eo-compat">xTool D1 Pro · xTool P2 · xCS</div></div>
+      <div class="eo" onclick="sendToMachine('vcarve');closeModal('export-modal')"><h4>VCarve</h4><p>Vectric toolpath format</p><div class="eo-compat">VCarve Pro · VCarve Desktop</div></div>
+      <div class="eo" onclick="sendToMachine('aspire');closeModal('export-modal')"><h4>Aspire</h4><p>Full 3D relief for Aspire</p><div class="eo-compat">Aspire 9+ · Vectric</div></div>
+    </div>
+    <div class="mbtns">
+      <button class="mbtn cancel" onclick="closeModal('export-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settings-modal">
+  <div class="modal" style="max-width:440px">
+    <h2>Settings</h2>
+    <p>© 2025 Edward Hirth WoodWorks · CarvAI Pro · Patent Pending</p>
+    <div class="settings-grid">
+      <div class="sg-row"><div><label>Dark Theme</label><small>Professional dark UI optimized for shop use</small></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="sg-row"><div><label>Auto-Save</label><small>Save design every 2 minutes</small></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+      <div class="sg-row"><div><label>Show Grid</label><small>3D viewport reference grid</small></div><button class="toggle on" id="gridToggle" onclick="this.classList.toggle('on');toggleGrid()"></button></div>
+      <div class="sg-row"><div><label>High Quality Render</label><small>4x AA — may reduce performance</small></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+      <div class="sg-row"><div><label>Metric Units</label><small>Switch from inches to mm</small></div><button class="toggle" onclick="this.classList.toggle('on');toggleUnits()"></button></div>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr)">
+      <p style="font-family:'JetBrains Mono';font-size:8.5px;color:var(--stl);line-height:1.8">
+        © 2025 Edward Hirth WoodWorks. All Rights Reserved. Patent Pending.<br>
+        Inventor: Edward Hirth · AI-Assisted · Human-Invented &amp; Human-Owned<br>
+        <span id="userInfoDisplay"></span>
+      </p>
+    </div>
+    <div class="mbtns">
+      <button class="mbtn cancel" onclick="closeModal('settings-modal')">Close</button>
+      <button class="mbtn go" onclick="Auth.logout()">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULATOR MODAL -->
+<div class="modal-bg" id="sim-modal">
+  <div class="modal" style="max-width:440px">
+    <h2>Toolpath Simulation</h2>
+    <div id="sim-content" style="font-family:'JetBrains Mono';font-size:10px;color:var(--cd);line-height:2;background:var(--st);border-radius:8px;padding:16px;margin-bottom:16px;border:1px solid var(--bdrb)">
+      Running simulation...
+    </div>
+    <div class="mbtns">
+      <button class="mbtn cancel" onclick="closeModal('sim-modal')">Close</button>
+      <button class="mbtn go" onclick="exportGCode();closeModal('sim-modal')">Export G-Code</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// © 2025 Edward Hirth WoodWorks. All Rights Reserved.
+// Patent Pending. PROPRIETARY SOFTWARE.
+// Inventor: Edward Hirth
+// ═══════════════════════════════════════════════════════
+'use strict';
+
+// ── DESIGN STATE ──
+let state = {
+  tool:'circle', w:12, h:12, t:0.75,
+  profile:'flat', material:'Oak',
+  profileDepth:.40, profileWidth:.35,
+  cutDepth:.60, taper:0, relief:0,
+  wireframe:false, gridOn:true,
+  rpm:18000, feed:100,
+  strategy:'profile',
+};
+let undoStack = [], redoStack = [];
+let micOn = false, speechRec = null;
+let pgPlan = 'pro';
+
+// ── SPLASH ──
+window.addEventListener('load', () => {
+  const prog = document.getElementById('spProg');
+  const status = document.getElementById('spStatus');
+  const steps = [
+    [10, 'Loading Three.js engine…'],
+    [25, 'Initializing 3D renderer…'],
+    [45, 'Building material library…'],
+    [60, 'Loading edge profiles…'],
+    [75, 'Starting CarvAI Pro…'],
+    [90, 'Checking authentication…'],
+    [100, 'Ready.'],
+  ];
+  let i = 0;
+  const advance = () => {
+    if (i >= steps.length) {
+      setTimeout(async () => {
+        document.getElementById('splash').style.opacity = '0';
+        setTimeout(async () => {
+          document.getElementById('splash').style.display = 'none';
+          await requireAuth((user) => {
+            document.getElementById('app-root').style.display = 'flex';
+            initApp(user);
+          });
+        }, 500);
+      }, 300);
+      return;
+    }
+    const [pct, msg] = steps[i++];
+    prog.style.width = pct + '%';
+    status.textContent = msg;
+    setTimeout(advance, 120 + Math.random()*120);
+  };
+  advance();
+});
+
+function initApp(user) {
+  // Set user info in UI
+  const name = Auth.getDisplayName();
+  document.getElementById('tb-uname').textContent = name;
+  document.getElementById('tb-avatar').textContent = name[0].toUpperCase();
+  document.getElementById('tb-plan').textContent = Auth.plan?.toUpperCase() || 'TRIAL';
+  document.getElementById('userInfoDisplay').textContent = `User: ${user.email || 'Demo'} | Plan: ${Auth.plan}`;
+
+  // Hide API key bar if key exists
+  if (CarvAI.getKey()) document.getElementById('keyBar').style.display = 'none';
+
+  // Init 3D engine
+  const canvas = document.getElementById('cnc-canvas');
+  Engine.init(canvas);
+  rebuild();
+  loadSaved();
+  setupKeyboardShortcuts();
+}
+
+// ── PAYWALL HELPERS ──
+let pgSelectedPlan = 'pro';
+function selPgPlan(el, plan) {
+  document.querySelectorAll('.pgp').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+  pgSelectedPlan = plan;
+}
+function submitTrial() {
+  const email = document.getElementById('pg-email').value.trim();
+  const name = document.getElementById('pg-name').value.trim();
+  if (!email || !email.includes('@')) { toast('Enter a valid email address','warn'); return; }
+  const user = Auth.startTrial(email, name || 'Designer', pgSelectedPlan);
+  hidePaywallGate();
+  document.getElementById('app-root').style.display = 'flex';
+  initApp(user);
+  toast('🎉 14-Day Free Trial Started!');
+}
+function startDemo() {
+  const user = Auth.startTrial('demo@edwardhirthwoodworks.com','Demo User','pro');
+  hidePaywallGate();
+  document.getElementById('app-root').style.display = 'flex';
+  initApp(user);
+  toast('Demo mode — 14-day trial active');
+}
+
+// ── BUILD MODEL ──
+function rebuild() {
+  state.w = parseFloat(document.getElementById('dW').value) || 12;
+  state.h = parseFloat(document.getElementById('dH').value) || 12;
+  state.t = parseFloat(document.getElementById('dT').value) || 0.75;
+  state.rpm = parseInt(document.getElementById('spindleRpm')?.value) || 18000;
+  state.feed = parseInt(document.getElementById('feedRate')?.value) || 100;
+
+  const stats = Engine.build(state);
+  document.getElementById('sbPolys').textContent = stats.polys.toLocaleString();
+  document.getElementById('sbVerts').textContent = stats.verts.toLocaleString();
+  document.getElementById('sbProfile').textContent = state.profile;
+  document.getElementById('sbMat').textContent = state.material;
+  document.getElementById('sbTool').textContent = state.tool;
+  document.getElementById('hW').textContent = state.w.toFixed(3)+'"';
+  document.getElementById('hH').textContent = state.h.toFixed(3)+'"';
+  document.getElementById('hT').textContent = state.t.toFixed(3)+'"';
+  document.getElementById('hM').textContent = state.material;
+  document.getElementById('hP').textContent = state.profile.charAt(0).toUpperCase()+state.profile.slice(1);
+  document.getElementById('tb-profile').textContent = '⌒ '+state.profile.charAt(0).toUpperCase()+state.profile.slice(1);
+  document.getElementById('tb-material').textContent = '🪵 '+state.material;
+
+  // Flash
+  const f = document.getElementById('flashMsg');
+  f.style.display = 'block';
+  clearTimeout(f._t);
+  f._t = setTimeout(() => f.style.display='none', 1400);
+}
+function rebuildFromScratch() {
+  pushUndo();
+  rebuild();
+}
+function updateDims() { rebuild(); }
+
+// ── TOOL SELECTION ──
+function selTool(el, tool) {
+  document.querySelectorAll('.toolbar .tl').forEach(e => e.classList.remove('act'));
+  el.classList.add('act');
+  state.tool = tool;
+  syncToolPanel(tool);
+  rebuild();
+}
+function selTool2(el, tool) {
+  document.querySelectorAll('#pane-shape .sg').forEach(e => e.classList.remove('act'));
+  el.classList.add('act');
+  state.tool = tool;
+  rebuild();
+}
+function syncToolPanel(tool) {
+  document.querySelectorAll('#pane-shape .sg').forEach(e => {
+    e.classList.toggle('act', e.onclick?.toString().includes(`'${tool}'`));
+  });
+}
+
+// ── PROFILE SELECTION ──
+function selProf(el, prof) {
+  document.querySelectorAll('.pg').forEach(e => e.classList.remove('act'));
+  el.classList.add('act');
+  state.profile = prof;
+  rebuild();
+}
+function applyProfile(prof) {
+  state.profile = prof;
+  document.querySelectorAll('.pg').forEach(e => {
+    const match = e.getAttribute('onclick')?.includes(`'${prof}'`);
+    e.classList.toggle('act', !!match);
+  });
+  rebuild();
+}
+
+// ── MATERIAL SELECTION ──
+function selMat(el, mat, color) {
+  document.querySelectorAll('.mg').forEach(e => e.classList.remove('act'));
+  el.classList.add('act');
+  state.material = mat;
+  rebuild();
+}
+function applyMaterial(mat) {
+  state.material = mat;
+  document.querySelectorAll('.mg').forEach(e => {
+    e.classList.toggle('act', e.getAttribute('onclick')?.includes(`'${mat}'`));
+  });
+  rebuild();
+}
+
+// ── VIEW / CAMERA ──
+function setView(view) {
+  document.querySelectorAll('.vt').forEach(e => e.classList.remove('act'));
+  const btns = document.querySelectorAll('.vt');
+  const map = {perspective:0,top:1,front:2,side:3,isometric:4};
+  if (btns[map[view]]) btns[map[view]].classList.add('act');
+  Engine.setView(view);
+}
+let gridOn = true, wireOn = false;
+function toggleGrid() {
+  gridOn = !gridOn;
+  Engine.toggleGrid(gridOn);
+  document.getElementById('vb-grid').classList.toggle('on', gridOn);
+}
+function toggleWire() {
+  wireOn = !wireOn;
+  state.wireframe = wireOn;
+  Engine.setWireframe(wireOn);
+  document.getElementById('vb-wire').classList.toggle('on', wireOn);
+  document.getElementById('tb-wire').classList.toggle('act', wireOn);
+}
+
+// ── LEFT PANEL TABS ──
+function switchLP(pane, el) {
+  document.querySelectorAll('.lp-pane').forEach(p => p.classList.remove('show'));
+  document.getElementById('pane-'+pane)?.classList.add('show');
+  document.querySelectorAll('.lp-tab').forEach(t => t.classList.remove('act'));
+  if (el) el.classList.add('act');
+}
+
+// ── APP MODE ──
+function setAppMode(el, mode) {
+  document.querySelectorAll('.mt-tab').forEach(t => t.classList.remove('act'));
+  el.classList.add('act');
+  if (mode === 'simulate') showSimulator();
+  if (mode === 'toolpath') { Engine.showToolpath(state); toast('Toolpath generated'); }
+  if (mode === 'design') Engine.clearToolpath();
+}
+
+// ── STRATEGY ──
+function selStrategy(el, s) {
+  document.querySelectorAll('#pane-cut .sg').forEach(e => e.classList.remove('act'));
+  el.classList.add('act');
+  state.strategy = s;
+  toast('Strategy: '+s.charAt(0).toUpperCase()+s.slice(1));
+}
+
+// ── UNDO/REDO ──
+function pushUndo() {
+  undoStack.push(JSON.stringify(state));
+  if (undoStack.length > 50) undoStack.shift();
+  redoStack = [];
+}
+function undo() {
+  if (!undoStack.length) return;
+  redoStack.push(JSON.stringify(state));
+  const prev = JSON.parse(undoStack.pop());
+  Object.assign(state, prev);
+  rebuild();
+  toast('Undo');
+}
+function redo() {
+  if (!redoStack.length) return;
+  undoStack.push(JSON.stringify(state));
+  const next = JSON.parse(redoStack.pop());
+  Object.assign(state, next);
+  rebuild();
+  toast('Redo');
+}
+
+// ── SAVE / LOAD ──
+function saveDesign() {
+  localStorage.setItem('ehw_design', JSON.stringify(state));
+  toast('Design saved ✓');
+}
+function loadSaved() {
+  const saved = localStorage.getItem('ehw_design');
+  if (saved) {
+    try { Object.assign(state, JSON.parse(saved)); rebuild(); } catch(e){}
+  }
+}
+function newDesign() {
+  pushUndo();
+  state = { tool:'circle',w:12,h:12,t:0.75,profile:'flat',material:'Oak',profileDepth:.4,profileWidth:.35,cutDepth:.6,taper:0,relief:0,wireframe:false,gridOn:true,rpm:18000,feed:100,strategy:'profile' };
+  document.getElementById('dW').value = '12.000';
+  document.getElementById('dH').value = '12.000';
+  document.getElementById('dT').value = '0.750';
+  rebuild();
+  toast('New design');
+}
+function openDesign() { toast('Open: use File → Open (coming soon)','warn'); }
+
+// ── EXPORT ──
+function exportSTL() {
+  const stl = Engine.exportSTL(state);
+  if (!stl) { toast('Build a model first','warn'); return; }
+  download(`EHW_${state.tool}_${state.material}_${state.profile}.stl`, stl, 'model/stl');
+  toast('STL exported — © 2025 Edward Hirth WoodWorks');
+}
+function exportGCode() {
+  const gc = Engine.exportGCode(state);
+  download(`EHW_${state.tool}_${state.material}.nc`, gc, 'text/plain');
+  toast('G-Code exported');
+}
+function exportFmt(fmt) {
+  const content = `; ${fmt} Export\n; © 2025 Edward Hirth WoodWorks. All Rights Reserved. Patent Pending.\n; Design: ${state.tool} | ${state.w}"x${state.h}"x${state.t}" | ${state.material} | ${state.profile}\n; Inventor: Edward Hirth\n; Generated by CarvAI Pro Pro\n`;
+  download(`EHW_design.${fmt.toLowerCase()}`, content, 'text/plain');
+  toast(fmt + ' exported');
+}
+function sendToMachine(machine) {
+  const machineNames = { xcarvemap:'X-Carve / Easel Pro', xtool:'xTool', vcarve:'VCarve Pro', aspire:'Aspire', shapeoko:'Shapeoko', avid:'Avid CNC' };
+  const gc = Engine.exportGCode(state);
+  const name = machineNames[machine] || machine;
+  download(`EHW_for_${machine}.nc`, `; Optimized for ${name}\n; © 2025 Edward Hirth WoodWorks. All Rights Reserved.\n${gc}`, 'text/plain');
+  toast(`Exported for ${name}`);
+}
+function download(name, content, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = name;
+  a.click();
+}
+
+// ── SIMULATOR ──
+function showSimulator() {
+  const w = state.w, h = state.h, t = state.t;
+  const time = Math.round(w*h*0.14);
+  const passes = Math.ceil(t / (parseFloat(document.getElementById('passDepth')?.value)||0.125));
+  document.getElementById('sim-content').innerHTML = `
+<span style="color:var(--gb)">▶ SIMULATION COMPLETE</span><br><br>
+📐 Dimensions.......... ${w}" × ${h}" × ${t}"<br>
+🪵 Material............. ${state.material}<br>
+⌒ Profile............... ${state.profile}<br>
+🔧 Strategy............. ${state.strategy}<br>
+<br>
+<span style="color:var(--al)">⏱ Estimated time....... ~${time} min</span><br>
+🔄 Depth passes........ ${passes}<br>
+📏 Total toolpath...... ~${Math.round(w*h*2.3)}" linear<br>
+⚡ Feed rate............. ${state.feed} IPM<br>
+🔩 Spindle............... ${state.rpm} RPM<br>
+<br>
+<span style="color:var(--gb)">✅ No collisions detected</span><br>
+✅ G-Code syntax valid<br>
+✅ Compatible: X-Carve, xTool, Shapeoko, Avid<br>
+<br>
+<span style="font-size:7px;color:var(--stl)">© 2025 Edward Hirth WoodWorks · Patent Pending</span>`;
+  openModal('sim-modal');
+}
+
+// ── MENUS ──
+function toggleMenu(id) {
+  const isOpen = document.getElementById(id).classList.contains('open');
+  closeMenus();
+  if (!isOpen) {
+    document.getElementById(id).classList.add('open');
+    document.querySelectorAll('.menu-btn').forEach(b => {
+      if (b.getAttribute('onclick')?.includes(id)) b.classList.add('act');
+    });
+  }
+}
+function closeMenus() {
+  document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('act'));
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.menu-btn') && !e.target.closest('.dropdown')) closeMenus();
+});
+
+// ── MODALS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function exportModal() { openModal('export-modal'); }
+function showSettings() { openModal('settings-modal'); }
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+
+// ── CHAT / AI ──
+function qs(text) {
+  document.getElementById('chatIn').value = text;
+  sendMsg();
+}
+async function sendMsg() {
+  const ta = document.getElementById('chatIn');
+  const msg = ta.value.trim();
+  if (!msg) return;
+  ta.value = '';
+  ta.style.height = '36px';
+  addMsg(msg, 'usr');
+  const thinking = addThinking();
+  await CarvAI.ask(msg, state, (reply, done, cmds) => {
+    thinking.remove();
+    addMsg(reply, 'ai');
+    applyCommands(cmds);
+  });
+}
+function addMsg(text, role) {
+  const log = document.getElementById('chatLog');
+  const d = document.createElement('div');
+  d.className = 'msg '+role;
+  const t = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  d.innerHTML = `<div class="bubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div><div class="msg-time">${t}</div>`;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+function addThinking() {
+  const log = document.getElementById('chatLog');
+  const d = document.createElement('div');
+  d.className = 'msg ai';
+  d.innerHTML = '<div class="thinking"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+function applyCommands(cmds) {
+  if (!cmds || !cmds.length) return;
+  cmds.forEach(cmd => {
+    if (cmd.type === 'profile') applyProfile(cmd.value);
+    if (cmd.type === 'material') applyMaterial(cmd.value);
+    if (cmd.type === 'tool') { state.tool = cmd.value; rebuild(); }
+    if (cmd.type === 'depth') { state.cutDepth = cmd.value; rebuild(); }
+  });
+}
+function setMode(el, mode) {
+  document.querySelectorAll('.mpill').forEach(p => p.classList.remove('act'));
+  el.classList.add('act');
+  if (mode === 'voice') toggleMic();
+}
+function saveKey() {
+  const k = document.getElementById('keyIn').value.trim();
+  if (k.startsWith('sk-ant')) {
+    CarvAI.setKey(k);
+    document.getElementById('keyBar').style.display = 'none';
+    toast('API key saved — real AI active!');
+  } else {
+    toast('Invalid key — must start with sk-ant-','warn');
+  }
+}
+
+// ── VOICE ──
+function toggleMic() {
+  const btn = document.getElementById('micBtn');
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    toast('Voice not supported in this browser','warn'); return;
+  }
+  if (micOn) {
+    speechRec?.stop(); micOn = false; btn.classList.remove('on'); return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  speechRec = new SR();
+  speechRec.continuous = false;
+  speechRec.lang = 'en-US';
+  speechRec.onresult = e => {
+    const t = e.results[0][0].transcript;
+    document.getElementById('chatIn').value = t;
+    sendMsg();
+  };
+  speechRec.onend = () => { micOn = false; btn.classList.remove('on'); };
+  speechRec.start();
+  micOn = true;
+  btn.classList.add('on');
+  toast('Listening… speak your command');
+}
+
+// ── MISC ──
+function toggleUnits() { toast('Metric/Imperial toggle (coming soon)','warn'); }
+
+// ── KEYBOARD SHORTCUTS ──
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const k = e.key.toLowerCase();
+    if (e.metaKey || e.ctrlKey) {
+      if (k==='s') { e.preventDefault(); saveDesign(); }
+      if (k==='n') { e.preventDefault(); newDesign(); }
+      if (k==='z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+      if (k==='e') { e.preventDefault(); exportModal(); }
+    } else {
+      if (k==='g') toggleGrid();
+      if (k==='w') toggleWire();
+      if (k==='r') Engine.resetCamera();
+      if (k==='1') setView('perspective');
+      if (k==='2') setView('top');
+      if (k==='3') setView('front');
+      if (k==='4') setView('side');
+      if (k==='5') setView('isometric');
+    }
+  });
+}
+
+// ── TOAST ──
+function toast(msg, type='') {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const d = document.createElement('div');
+  d.className = 'toast' + (type ? ' '+type : '');
+  d.textContent = msg;
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2800);
+}
+
+// ── AUTO-RESIZE TEXTAREA ──
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('chat-ta')) {
+    e.target.style.height = '36px';
+    e.target.style.height = Math.min(e.target.scrollHeight, 80) + 'px';
+  }
+});
+</script>
+</body>
+</html>

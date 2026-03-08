@@ -1,0 +1,32 @@
+CARVAI PRO — BY EDWARD HIRTH WOODWORKS
+PROPRIETARY SOFTWARE LICENSE
+
+Copyright © 2025 Edward Hirth, doing business as Edward Hirth WoodWorks.
+All Rights Reserved. Patent Pending.
+
+PRODUCT: CarvAI Pro — The AI CNC Studio for Makers
+BRAND: CarvAI™ | CarvAI Pro™ | Edward Hirth WoodWorks™
+INVENTOR: Edward Hirth (sole inventor)
+WEBSITE: https://carvai.com (pending)
+
+THIS IS PROPRIETARY SOFTWARE. IT IS NOT OPEN SOURCE.
+NOT affiliated with Vectric Ltd, Inventables, or Makeblock.
+
+AI-ASSISTED DEVELOPMENT DISCLOSURE:
+AI tools were used as instruments under sole creative direction of Edward Hirth.
+Per 2024 USPTO guidelines, Edward Hirth is the SOLE INVENTOR.
+
+PATENT: Provisional Patent Application pending — USPTO 2025
+TRADEMARKS PENDING: CarvAI™ · CarvAI Pro™ · Edward Hirth WoodWorks™
+COPYRIGHT: Pending — U.S. Copyright Office
+
+PROHIBITED WITHOUT A VALID LICENSE:
+- Copying, distributing, or sharing this software
+- Reverse engineering or decompiling
+- Creating derivative works
+- Using the CarvAI brand name
+- Removing copyright notices
+
+ENFORCEMENT: Up to $150,000 per infringement under 17 U.S.C. § 101
+
+© 2025 Edward Hirth WoodWorks. All Rights Reserved. Patent Pending.

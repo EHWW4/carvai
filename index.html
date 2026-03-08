@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  CARVAI PRO — The AI CNC Studio for Makers                  ║
+║  Brought to you by Edward Hirth WoodWorks                   ║
+║  © 2025 Edward Hirth WoodWorks. All Rights Reserved.        ║
+║  Patent Pending. PROPRIETARY SOFTWARE.                      ║
+║  Inventor: Edward Hirth                                     ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1A6B3A">
+<meta name="description" content="CarvAI Pro — The AI CNC Design Studio for Makers. Works inside VCarve, Aspire, X-Carve & xTool. By Edward Hirth WoodWorks. Patent Pending.">
+<meta name="author" content="Edward Hirth WoodWorks">
+<title>CarvAI Pro — The AI CNC Studio for Makers | by Edward Hirth WoodWorks</title>
+<link rel="icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#1A6B3A;--gl:#2A8B4E;--gb:#34A85A;
+  --a:#D4820A;--al:#F09A20;
+  --bg:#07090A;--panel:#0E1410;--st:#182018;--sl:#334433;
+  --cr:#EDF5E8;--cd:#B8C8B0;--w:#F8FAF6;
+  --bdr:rgba(26,107,58,0.18);--bdrb:rgba(26,107,58,0.32);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--cr);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(7,9,10,0.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr);height:60px;display:flex;align-items:center;padding:0 5vw;gap:14px}
+.n-logo{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0}
+.n-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 16px rgba(26,107,58,0.45)}
+.n-mark svg{width:22px;height:22px}
+.n-wordmark{display:flex;flex-direction:column;line-height:1}
+.n-wordmark b{font-family:'Bebas Neue';font-size:22px;letter-spacing:3px;color:var(--w)}
+.n-wordmark b em{color:var(--gb);font-style:normal}
+.n-wordmark small{font-family:'JetBrains Mono';font-size:7.5px;color:var(--cd);letter-spacing:1.5px;margin-top:1px}
+.n-links{display:flex;gap:1px;margin-left:16px}
+.nl{font-family:'Barlow';font-size:12px;font-weight:600;padding:6px 12px;border-radius:4px;text-decoration:none;color:var(--cd);border:none;background:transparent;cursor:pointer;transition:color .13s;text-transform:uppercase;letter-spacing:.5px}
+.nl:hover{color:var(--gb)}
+.n-sp{flex:1}
+.n-pill{font-family:'JetBrains Mono';font-size:7.5px;letter-spacing:1.5px;padding:3px 9px;border-radius:3px;background:rgba(26,107,58,0.1);border:1px solid rgba(26,107,58,0.25);color:var(--gb)}
+.n-app{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:7px 16px;border-radius:5px;cursor:pointer;background:transparent;border:1px solid var(--bdrb);color:var(--cd);transition:all .14s}
+.n-app:hover{border-color:var(--gb);color:var(--gb)}
+.n-cta{font-family:'Barlow Condensed';font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 22px;border-radius:6px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 2px 16px rgba(26,107,58,0.4);transition:all .18s}
+.n-cta:hover{transform:translateY(-1px);box-shadow:0 4px 22px rgba(26,107,58,0.55)}
+@media(max-width:768px){.n-links{display:none}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 5vw 70px;text-align:center;position:relative;overflow:hidden}
+.hbg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 35%,rgba(26,107,58,0.1) 0%,transparent 65%),radial-gradient(ellipse 40% 30% at 80% 80%,rgba(212,130,10,0.05) 0%,transparent 50%)}
+.hgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(26,107,58,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(26,107,58,0.04) 1px,transparent 1px);background-size:50px 50px}
+.scan{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--gb) 50%,transparent 100%);animation:scan 5s ease-in-out infinite;opacity:.6}
+@keyframes scan{0%,100%{top:0;opacity:0}8%{opacity:.6}92%{opacity:.3}99%{top:100%;opacity:0}}
+.hz{position:relative;z-index:2;max-width:1060px;margin:0 auto;width:100%}
+
+/* Logo mark big */
+.hero-mark{
+  width:80px;height:80px;background:linear-gradient(135deg,var(--g),var(--gl));
+  border-radius:20px;margin:0 auto 24px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 40px rgba(26,107,58,0.5),0 0 80px rgba(26,107,58,0.15);
+  animation:fu .4s ease both;
+}
+.hero-mark svg{width:48px;height:48px}
+
+.cbadges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:22px;animation:fu .5s ease .05s both}
+.cb{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono';font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:4px;border:1px solid}
+.cb.v{background:rgba(26,107,58,0.09);border-color:rgba(26,107,58,0.28);color:var(--gb)}
+.cb.a{background:rgba(212,130,10,0.07);border-color:rgba(212,130,10,0.25);color:var(--al)}
+.cb.x{background:rgba(36,113,163,0.07);border-color:rgba(36,113,163,0.25);color:#5DADE2}
+.cb.m{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.1);color:var(--cd)}
+.cbd{width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 4px currentColor}
+
+.hero-eyebrow{font-family:'JetBrains Mono';font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gb);margin-bottom:14px;animation:fu .55s ease .08s both}
+.hero-title{font-family:'Bebas Neue';font-size:clamp(52px,11vw,130px);line-height:.88;letter-spacing:3px;color:var(--w);animation:fu .6s ease .1s both}
+.hero-title em{color:var(--gb);font-style:normal;display:block}
+.hero-title span{color:var(--al);font-style:normal}
+.hero-by{font-family:'JetBrains Mono';font-size:10px;letter-spacing:2px;color:var(--cd);margin:14px 0 0;animation:fu .65s ease .12s both;text-transform:uppercase}
+.hero-by strong{color:var(--gb)}
+.hero-sub{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:var(--cd);max-width:700px;margin:16px auto 0;line-height:1.65;animation:fu .7s ease .15s both}
+.hacts{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin:32px 0;animation:fu .8s ease .18s both}
+.btn{font-family:'Barlow Condensed';font-size:19px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:15px 38px;border-radius:7px;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:all .18s}
+.btn.p{background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 4px 22px rgba(26,107,58,0.45)}
+.btn.p:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,107,58,0.6)}
+.btn.s{background:linear-gradient(135deg,var(--a),var(--al));color:var(--w);box-shadow:0 4px 18px rgba(212,130,10,0.35)}
+.btn.s:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(212,130,10,0.5)}
+.btn.g{background:transparent;border:1px solid var(--bdrb);color:var(--cd)}
+.btn.g:hover{border-color:var(--gb);color:var(--gb)}
+.hproof{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.8px;color:var(--cd);animation:fu .9s ease .22s both}
+.hp::before{content:'✓ ';color:var(--gb)}
+@keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* MOCKUP */
+.mockup{width:min(960px,90vw);margin:52px auto 0;border-radius:14px;overflow:hidden;border:1px solid var(--bdrb);box-shadow:0 40px 100px rgba(0,0,0,0.75),0 0 0 1px rgba(26,107,58,0.08);animation:fu 1s ease .3s both}
+.mbar{background:var(--st);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bdr)}
+.mcirc{width:11px;height:11px;border-radius:50%}
+.murl{flex:1;margin:0 14px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:5px 12px;font-family:'JetBrains Mono';font-size:9px;color:var(--sl);display:flex;align-items:center;gap:7px}
+.murl-lock{color:var(--gb);font-size:10px}
+.mbody{background:#060A06;min-height:380px;display:flex;overflow:hidden}
+.msb{width:168px;background:var(--panel);border-right:1px solid var(--bdr);padding:10px;flex-shrink:0}
+.mvp{flex:1;position:relative}
+.mvgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(26,107,58,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(26,107,58,0.035) 1px,transparent 1px);background-size:30px 30px}
+.mfloat{position:absolute;top:50%;left:50%;transform:translate(-50%,-53%);animation:fl 5s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translate(-50%,-53%)}50%{transform:translate(-50%,-58%)}}
+.mai{width:188px;background:var(--panel);border-left:1px solid var(--bdr);padding:10px;flex-shrink:0}
+.ml{font-family:'JetBrains Mono';font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--gb);margin-bottom:6px}
+.mt{height:20px;background:var(--st);border-radius:3px;margin-bottom:3px;display:flex;align-items:center;padding:0 7px;gap:5px;font-size:9px;color:var(--cd)}
+.mt.on{background:rgba(26,107,58,0.16);border:1px solid rgba(26,107,58,0.26);color:var(--gb)}
+.mbu{background:var(--st);border-radius:6px 6px 6px 2px;padding:5px 7px;font-size:9px;color:var(--cd);margin-bottom:5px;line-height:1.4}
+.mbu.u{border-radius:6px 6px 2px 6px;background:rgba(26,107,58,0.14);border:1px solid rgba(26,107,58,0.22);color:var(--gb)}
+@media(max-width:640px){.msb,.mai{display:none}}
+
+/* SECTION BASE */
+section{padding:90px 5vw}
+.sl{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--gb);margin-bottom:10px}
+h2{font-family:'Bebas Neue';font-size:clamp(34px,5vw,66px);letter-spacing:3px;color:var(--w);line-height:.95;margin-bottom:14px}
+.ssub{font-size:16px;font-weight:500;color:var(--cd);max-width:600px;line-height:1.65}
+
+/* FEATURES GRID */
+#features{background:var(--panel)}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:52px}
+.feat-card{background:var(--st);border:1px solid var(--bdr);border-radius:12px;padding:26px;transition:all .2s}
+.feat-card:hover{transform:translateY(-4px);border-color:var(--gb);box-shadow:0 8px 30px rgba(26,107,58,0.15)}
+.feat-icon{font-size:32px;margin-bottom:14px;display:block}
+.feat-card h3{font-family:'Barlow Condensed';font-size:20px;font-weight:700;letter-spacing:1.5px;color:var(--w);text-transform:uppercase;margin-bottom:8px}
+.feat-card p{font-size:14px;color:var(--cd);line-height:1.6}
+.feat-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:12px}
+.ftag{font-family:'JetBrains Mono';font-size:7.5px;letter-spacing:1px;padding:2px 7px;border-radius:3px;text-transform:uppercase;background:rgba(26,107,58,0.1);border:1px solid rgba(26,107,58,0.22);color:var(--gb)}
+.ftag.a{background:rgba(212,130,10,0.08);border-color:rgba(212,130,10,0.22);color:var(--al)}
+
+/* WORKS WITH */
+#works-with{background:var(--bg)}
+.machines{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:52px}
+.machine{background:var(--panel);border:1px solid var(--bdr);border-radius:10px;padding:22px;text-align:center;transition:all .18s}
+.machine:hover{border-color:var(--gb);transform:translateY(-3px)}
+.machine-icon{font-size:36px;margin-bottom:12px;display:block}
+.machine h3{font-family:'Barlow Condensed';font-size:18px;font-weight:700;letter-spacing:1.5px;color:var(--w);text-transform:uppercase;margin-bottom:5px}
+.machine p{font-size:12px;color:var(--cd);line-height:1.5}
+.machine .plug{font-family:'JetBrains Mono';font-size:8px;color:var(--gb);letter-spacing:1px;margin-top:8px;text-transform:uppercase}
+
+/* HOW IT WORKS */
+#how{background:var(--panel)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:28px;margin-top:52px}
+.step{text-align:center;padding:0 8px}
+.snum{width:58px;height:58px;border-radius:50%;margin:0 auto 14px;background:var(--bg);border:2px solid var(--gb);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:24px;color:var(--gb);letter-spacing:2px;box-shadow:0 0 20px rgba(26,107,58,0.2)}
+.step:nth-child(even) .snum{border-color:var(--al);color:var(--al);box-shadow:0 0 20px rgba(212,130,10,0.15)}
+.stitle{font-family:'Barlow Condensed';font-size:17px;font-weight:700;letter-spacing:1px;color:var(--w);text-transform:uppercase;margin-bottom:7px}
+.sdesc{font-size:13px;color:var(--cd);line-height:1.55}
+
+/* COMPARE */
+#compare{background:var(--bg)}
+.ctable{width:100%;border-collapse:collapse;margin-top:50px;font-size:13px}
+.ctable th{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;text-align:center;border-bottom:2px solid var(--bdrb)}
+.ctable th:first-child{text-align:left;width:36%}
+.ctable th.us{color:var(--gb);position:relative}
+.ctable th.us::after{content:'OUR APP';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--g);color:var(--w);font-size:7px;letter-spacing:2px;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.ctable td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);text-align:center;font-weight:500}
+.ctable td:first-child{text-align:left;color:var(--cr);font-weight:600}
+.ctable tr:hover td{background:rgba(26,107,58,0.035)}
+.ck{color:var(--gb);font-size:17px}.cn{color:var(--sl);font-size:15px}.cp{color:var(--al);font-size:12px;font-weight:700}
+.ctable tr.hl td{background:rgba(26,107,58,0.04)}
+
+/* PRICING */
+#pricing{background:var(--panel)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:52px;max-width:1020px}
+.pc{background:var(--bg);border:1px solid var(--bdr);border-radius:14px;padding:28px 22px;position:relative;transition:all .18s}
+.pc:hover{transform:translateY(-3px)}
+.pc.feat{border-color:var(--gb);background:rgba(26,107,58,0.04);box-shadow:0 0 40px rgba(26,107,58,0.12)}
+.crown{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);font-family:'JetBrains Mono';font-size:7.5px;font-weight:700;letter-spacing:2px;padding:3px 13px;border-radius:20px;white-space:nowrap}
+.pname{font-family:'Bebas Neue';font-size:22px;letter-spacing:3px;color:var(--w)}
+.pamt{font-family:'Bebas Neue';font-size:56px;color:var(--gb);line-height:1;margin:5px 0 1px}
+.pper{font-family:'JetBrains Mono';font-size:9.5px;color:var(--cd);margin-bottom:18px}
+.pfeats{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.pfeat{font-size:13px;color:var(--cd);display:flex;gap:7px;align-items:flex-start}
+.pfeat::before{content:'▸';color:var(--gb);font-size:9px;margin-top:2px;flex-shrink:0}
+.pbtn{width:100%;padding:13px;border-radius:7px;font-family:'Barlow Condensed';font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:none;transition:all .18s}
+.pbtn.p{background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 3px 14px rgba(26,107,58,0.35)}
+.pbtn.p:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(26,107,58,0.5)}
+.pbtn.gh{background:transparent;color:var(--cd);border:1px solid var(--bdrb)}
+.pbtn.gh:hover{border-color:var(--gb);color:var(--gb)}
+.pbtn.am{background:linear-gradient(135deg,var(--a),var(--al));color:var(--w)}
+
+/* OWNERSHIP */
+#own{background:var(--bg);padding:80px 5vw;text-align:center}
+.own-wrap{max-width:800px;margin:0 auto}
+.own-logo{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:20px}
+.own-mark{width:64px;height:64px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px rgba(26,107,58,0.45)}
+.own-mark svg{width:38px;height:38px}
+.own-name{text-align:left}
+.own-name b{font-family:'Bebas Neue';font-size:28px;letter-spacing:4px;color:var(--w);display:block}
+.own-name small{font-family:'JetBrains Mono';font-size:9px;color:var(--gb);letter-spacing:2px}
+.own-text{font-family:'JetBrains Mono';font-size:9.5px;color:var(--cd);line-height:1.9;letter-spacing:.3px;background:var(--panel);border:1px solid var(--bdrb);border-radius:10px;padding:24px 28px;text-align:left}
+.own-text strong{color:var(--gb)}
+.own-sub{font-family:'JetBrains Mono';font-size:10px;color:var(--gb);letter-spacing:2px;margin-bottom:20px;text-transform:uppercase}
+
+/* FOOTER */
+footer{background:var(--panel);border-top:1px solid var(--bdr);padding:52px 5vw 26px}
+.fg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+.fb-logo{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.fb-logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:7px;display:flex;align-items:center;justify-content:center}
+.fb-logo-mark svg{width:18px;height:18px}
+.fb-wordmark b{font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;color:var(--w)}
+.fb-wordmark b em{color:var(--gb);font-style:normal}
+.fb-wordmark small{font-family:'JetBrains Mono';font-size:7px;color:var(--cd);letter-spacing:1.5px;display:block}
+.fb p{font-size:13px;color:var(--cd);line-height:1.65;max-width:250px}
+.fc h4{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:2px;color:var(--w);text-transform:uppercase;margin-bottom:12px}
+.fc a{display:block;font-size:13px;color:var(--cd);text-decoration:none;margin-bottom:7px;transition:color .12s}
+.fc a:hover{color:var(--gb)}
+.fbot{border-top:1px solid var(--bdr);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-family:'JetBrains Mono';font-size:8px;color:var(--cd);letter-spacing:.4px}
+.pat{color:var(--al);font-weight:700}
+@media(max-width:768px){.fg{grid-template-columns:1fr 1fr}.fb{grid-column:1/-1}}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.86);backdrop-filter:blur(10px);z-index:500;align-items:center;justify-content:center}
+.mbg.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--bdrb);border-radius:18px;padding:38px 32px;max-width:520px;width:93%;box-shadow:0 40px 100px rgba(0,0,0,0.7);animation:mIn .22s ease}
+@keyframes mIn{from{opacity:0;transform:scale(.94) translateY(-14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px}
+.modal-mark{width:48px;height:48px;background:linear-gradient(135deg,var(--g),var(--gl));border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(26,107,58,0.4)}
+.modal-mark svg{width:28px;height:28px}
+.modal-wm b{font-family:'Bebas Neue';font-size:26px;letter-spacing:3px;color:var(--w);display:block;line-height:1}
+.modal-wm b em{color:var(--gb);font-style:normal}
+.modal-wm small{font-family:'JetBrains Mono';font-size:7.5px;color:var(--cd);letter-spacing:1.5px}
+.modal h2{font-family:'Bebas Neue';font-size:28px;letter-spacing:3px;color:var(--w);margin-bottom:6px;text-align:center}
+.modal>p{font-size:14px;color:var(--cd);line-height:1.55;margin-bottom:18px;text-align:center}
+.plrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.plc{background:var(--st);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:14px 9px;cursor:pointer;transition:all .15s;text-align:center;position:relative}
+.plc:hover{border-color:var(--gb);transform:translateY(-2px)}
+.plc.sel{border-color:var(--gb);background:rgba(26,107,58,0.07)}
+.plc .best{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--g);color:var(--w);font-family:'JetBrains Mono';font-size:7px;font-weight:700;letter-spacing:1.5px;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.plc .pn{font-family:'Barlow Condensed';font-size:16px;font-weight:700;letter-spacing:2px;color:var(--w);text-transform:uppercase}
+.plc .pa{font-family:'Bebas Neue';font-size:34px;color:var(--gb);line-height:1;margin:3px 0 1px}
+.plc .pp{font-family:'JetBrains Mono';font-size:7.5px;color:var(--cd)}
+.min{width:100%;background:var(--st);border:1px solid rgba(26,107,58,0.2);border-radius:7px;color:var(--cr);font-family:'Barlow';font-size:15px;padding:11px 13px;outline:none;margin-bottom:8px;transition:border-color .13s}
+.min:focus{border-color:var(--gb)}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.mbtn{font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;border-radius:6px;cursor:pointer;transition:all .13s;border:none}
+.mbtn.c{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--cd)}
+.mbtn.c:hover{border-color:var(--gb);color:var(--gb)}
+.mbtn.g{background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);box-shadow:0 2px 12px rgba(26,107,58,0.3)}
+.mbtn.g:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(26,107,58,0.45)}
+.mleg{font-family:'JetBrains Mono';font-size:7.5px;color:var(--sl);margin-top:13px;line-height:1.7;border-top:1px solid var(--bdr);padding-top:10px;text-align:center}
+.mleg a{color:var(--gb);text-decoration:none}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;right:18px;z-index:9000;background:linear-gradient(135deg,var(--g),var(--gl));color:var(--w);font-family:'Barlow Condensed';font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border-radius:7px;box-shadow:0 5px 22px rgba(26,107,58,0.5);animation:fu .25s ease;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="n-logo">
+    <div class="n-mark">
+      <svg viewBox="0 0 32 32" fill="none"><path d="M6 26 L16 6 L26 26" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 19 L22 19" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+    </div>
+    <div class="n-wordmark">
+      <b>Carv<em>AI</em> Pro</b>
+      <small>by Edward Hirth WoodWorks</small>
+    </div>
+  </a>
+  <div class="n-links">
+    <a href="#features" class="nl">Features</a>
+    <a href="#works-with" class="nl">Machines</a>
+    <a href="#compare" class="nl">Compare</a>
+    <a href="#pricing" class="nl">Pricing</a>
+  </div>
+  <div class="n-sp"></div>
+  <div class="n-pill">Patent Pending</div>
+  <button class="n-app" onclick="window.location.href='app.html'">Open App</button>
+  <button class="n-cta" onclick="openModal('trial')">Start Free Trial</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hbg"></div><div class="hgrid"></div><div class="scan"></div>
+  <div class="hz">
+    <div class="hero-mark">
+      <svg viewBox="0 0 48 48" fill="none"><path d="M8 40 L24 8 L40 40" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 28 L34 28" stroke="white" stroke-width="3.5" stroke-linecap="round"/></svg>
+    </div>
+    <div class="cbadges">
+      <div class="cb v"><div class="cbd"></div>VCarve Pro Plugin</div>
+      <div class="cb v"><div class="cbd"></div>Aspire Plugin</div>
+      <div class="cb x"><div class="cbd"></div>X-Carve / Easel Pro</div>
+      <div class="cb a"><div class="cbd"></div>xTool</div>
+      <div class="cb m"><div class="cbd"></div>Mac &amp; Windows</div>
+    </div>
+    <div class="hero-eyebrow">The AI CNC Studio Makers Have Been Waiting For</div>
+    <div class="hero-title">Design.<em>With AI.</em><span>Cut Anything.</span></div>
+    <div class="hero-by">Brought to you by <strong>Edward Hirth WoodWorks</strong> · Patent Pending</div>
+    <p class="hero-sub">CarvAI Pro is the AI-powered CNC design studio that installs inside VCarve, Aspire, X-Carve, and xTool — or runs standalone on any device. Voice control, real-time 3D, and instant machine-ready exports.</p>
+    <div class="hacts">
+      <button class="btn p" onclick="openModal('trial')">⬇ Start Free — 14 Days Free</button>
+      <button class="btn s" onclick="window.location.href='app.html'">▶ Try the App Now</button>
+      <button class="btn g" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</button>
+    </div>
+    <div class="hproof">
+      <span class="hp">Works inside VCarve &amp; Aspire</span>
+      <span class="hp">X-Carve &amp; xTool ready</span>
+      <span class="hp">Mac &amp; Windows native</span>
+      <span class="hp">Voice-driven AI design</span>
+      <span class="hp">Patent Pending</span>
+    </div>
+
+    <!-- APP MOCKUP -->
+    <div class="mockup">
+      <div class="mbar">
+        <div class="mcirc" style="background:#FF5F57"></div>
+        <div class="mcirc" style="background:#FFBD2E"></div>
+        <div class="mcirc" style="background:#28C840"></div>
+        <div class="murl"><span class="murl-lock">🔒</span> carvai.com/app — CarvAI Pro Studio (VCarve Plugin Active)</div>
+        <span style="font-family:'JetBrains Mono';font-size:8px;color:var(--gb);letter-spacing:1px">● LIVE</span>
+      </div>
+      <div class="mbody">
+        <div class="msb">
+          <div class="ml">Tools</div>
+          <div class="mt on">⬤ Circle</div>
+          <div class="mt">⬛ Rectangle</div>
+          <div class="mt">⭐ Star</div>
+          <div style="height:8px"></div>
+          <div class="ml">Profile</div>
+          <div class="mt on">⌒ Roundover ¾"</div>
+          <div class="mt">∧ Chamfer 45°</div>
+          <div class="mt">∪ Cove</div>
+          <div style="height:8px"></div>
+          <div class="ml">Material</div>
+          <div class="mt on">🪵 Oak · 0.75"</div>
+        </div>
+        <div class="mvp">
+          <div class="mvgrid"></div>
+          <div class="mfloat">
+            <svg width="380" height="260" viewBox="0 0 380 260">
+              <defs>
+                <linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#C8874A;stop-opacity:.93"/><stop offset="100%" style="stop-color:#8B5E34;stop-opacity:.88"/></linearGradient>
+                <radialGradient id="sh" cx="35%" cy="30%" r="52%"><stop offset="0%" style="stop-color:#E8B07A;stop-opacity:.5"/><stop offset="100%" style="stop-color:transparent"/></radialGradient>
+                <pattern id="wg" x="0" y="0" width="35" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-5)"><line x1="0" y1="2" x2="35" y2="2" stroke="rgba(0,0,0,.07)" stroke-width="1"/></pattern>
+              </defs>
+              <ellipse cx="190" cy="225" rx="108" ry="13" fill="rgba(0,0,0,.42)"/>
+              <path d="M74,146 L108,172 L272,172 L306,146 L306,172 L272,196 L108,196 L74,172 Z" fill="#3D2010"/>
+              <path d="M108,172 L108,196 L272,196 L272,172 Z" fill="#2A1508"/>
+              <ellipse cx="190" cy="146" rx="116" ry="44" fill="url(#tg)"/>
+              <ellipse cx="190" cy="146" rx="116" ry="44" fill="url(#wg)" opacity=".5"/>
+              <ellipse cx="190" cy="146" rx="116" ry="44" fill="url(#sh)"/>
+              <ellipse cx="190" cy="148" rx="116" ry="44" fill="none" stroke="rgba(232,176,122,.85)" stroke-width="5"/>
+              <text x="148" y="138" fill="rgba(0,0,0,.38)" font-size="13">★ ★ ★</text>
+              <text x="190" y="157" fill="rgba(0,0,0,.32)" font-family="Arial" font-size="8" font-weight="bold" text-anchor="middle" letter-spacing="2">CARVAI PRO</text>
+              <text x="190" y="216" fill="rgba(26,107,58,.5)" font-family="monospace" font-size="7.5" text-anchor="middle">12.00" × 0.75" · Oak · ¾" Roundover · STL Ready</text>
+            </svg>
+          </div>
+        </div>
+        <div class="mai">
+          <div class="ml">CarvAI Pro</div>
+          <div class="mbu">Hello! I'm CarvAI — your AI CNC assistant by Edward Hirth WoodWorks.</div>
+          <div class="mbu u">¾ roundover all edges</div>
+          <div class="mbu">✅ Applied! Whiteside #2103 · 16,000 RPM · 100 IPM. Preview updated.</div>
+          <div class="mbu u">Export for X-Carve</div>
+          <div class="mbu">⬇ Easel Pro G-Code ready. Feed: 100 IPM · RPM: 18,000 · Compatible ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="sl">Why CarvAI Pro</div>
+  <h2>Built Different.<br>For Makers.</h2>
+  <p class="ssub">Every feature exists because a real woodworker or maker needed it. No bloat. No learning curve.</p>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <span class="feat-icon">🤖</span>
+      <h3>CarvAI Intelligence</h3>
+      <p>Tell CarvAI what you want in plain English. "45 degree chamfer on the outer edge" — done. It knows your material, recommends the exact bit, RPM, and feed rate.</p>
+      <div class="feat-tags"><span class="ftag">Claude AI</span><span class="ftag">Voice Input</span><span class="ftag">Bit Advisor</span></div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🎙️</span>
+      <h3>Voice Control</h3>
+      <p>Hands covered in sawdust? Just talk. Speak your design changes out loud and CarvAI applies them live. Real Web Speech API — works offline in the shop.</p>
+      <div class="feat-tags"><span class="ftag">Offline</span><span class="ftag">Hands-Free</span><span class="ftag">100+ Commands</span></div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">⚙️</span>
+      <h3>9 Edge Profiles</h3>
+      <p>Flat, Roundover, Chamfer, Cove, Ogee, V-Carve, Bead, Bullnose, Fillet — all rendered live in real 3D with exact bit specs and toolpath generation.</p>
+      <div class="feat-tags"><span class="ftag">Live 3D</span><span class="ftag">Parametric</span><span class="ftag a">VCarve Ready</span></div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🪵</span>
+      <h3>Material Library</h3>
+      <p>12 materials built in — Oak, Walnut, Maple, Cherry, MDF, Plywood, Aluminum, Acrylic and more. Auto-calculates feeds, speeds, and pass depth per material.</p>
+      <div class="feat-tags"><span class="ftag">12 Materials</span><span class="ftag">Auto Feeds</span><span class="ftag">Visual Preview</span></div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">📐</span>
+      <h3>Multi-Format Export</h3>
+      <p>STL, G-Code, DXF, SVG, OBJ, STEP — all with your copyright embedded. Machine-specific exports for X-Carve, xTool, VCarve, Aspire, Shapeoko, and Avid.</p>
+      <div class="feat-tags"><span class="ftag">6 Formats</span><span class="ftag">© Embedded</span><span class="ftag a">Machine-Ready</span></div>
+    </div>
+    <div class="feat-card">
+      <span class="feat-icon">🔒</span>
+      <h3>Works Everywhere</h3>
+      <p>Mac, Windows, iPhone, Android, tablet — one subscription covers every device. Installs as a plugin inside VCarve and Aspire. Works offline as a PWA.</p>
+      <div class="feat-tags"><span class="ftag">PWA</span><span class="ftag">Offline</span><span class="ftag">All Platforms</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKS WITH -->
+<section id="works-with">
+  <div class="sl">Machine Compatibility</div>
+  <h2>Works With<br>Every Machine.</h2>
+  <p class="ssub">One tool that speaks every machine's language. No post-processor headaches.</p>
+  <div class="machines">
+    <div class="machine"><span class="machine-icon">🔧</span><h3>X-Carve</h3><p>Direct Easel Pro export. Full G-Code compatibility for all X-Carve models including X-Carve Pro.</p><div class="plug">Plugin Available</div></div>
+    <div class="machine"><span class="machine-icon">⚡</span><h3>xTool</h3><p>GRBL-compatible export for xTool D1 Pro, P2, and all xTool CNC machines. Works with xTool Creative Space.</p><div class="plug">Plugin Available</div></div>
+    <div class="machine"><span class="machine-icon">🗜️</span><h3>VCarve Pro</h3><p>Installs as a Gadget inside VCarve Pro 10+. Adds AI design directly to your existing workflow.</p><div class="plug">Gadget Plugin</div></div>
+    <div class="machine"><span class="machine-icon">🏆</span><h3>Aspire</h3><p>Full 3D relief export for Aspire 9+. Plugin adds AI voice control and CarvAI to your Aspire toolbar.</p><div class="plug">Gadget Plugin</div></div>
+    <div class="machine"><span class="machine-icon">🔩</span><h3>Shapeoko</h3><p>Carbide Motion compatible G-Code export. Works with Carbide Create workflow.</p><div class="plug">G-Code Export</div></div>
+    <div class="machine"><span class="machine-icon">🏭</span><h3>Avid CNC</h3><p>Full-size router compatible exports. Mach4 and UCCNC post-processors available.</p><div class="plug">G-Code Export</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:var(--panel)">
+  <div class="sl">Getting Started</div>
+  <h2>Up and Running<br>in 5 Minutes.</h2>
+  <p class="ssub">Download, install inside your existing software, and start designing with AI. No new workflow to learn.</p>
+  <div class="steps">
+    <div class="step"><div class="snum">01</div><div class="stitle">Download CarvAI</div><div class="sdesc">Download the plugin file from carvai.com. Works as a VCarve/Aspire gadget or standalone PWA on any device.</div></div>
+    <div class="step"><div class="snum">02</div><div class="stitle">Install in Vectric</div><div class="sdesc">VCarve/Aspire: Gadgets → Install Gadget → select the .vce file. The CarvAI toolbar appears instantly.</div></div>
+    <div class="step"><div class="snum">03</div><div class="stitle">Open CarvAI</div><div class="sdesc">Click the CarvAI button in your toolbar. The AI panel opens alongside your existing design project.</div></div>
+    <div class="step"><div class="snum">04</div><div class="stitle">Design with AI</div><div class="sdesc">Say or type what you want. "¾ inch roundover all edges." CarvAI applies it live with the exact bit spec.</div></div>
+    <div class="step"><div class="snum">05</div><div class="stitle">Export &amp; Cut</div><div class="sdesc">One click exports to your machine — X-Carve, xTool, VCarve, or any other. No format conversion needed.</div></div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare">
+  <div class="sl">Honest Comparison</div>
+  <h2>How We Compare.</h2>
+  <p class="ssub">CarvAI Pro vs the tools you already know.</p>
+  <div style="overflow-x:auto">
+    <table class="ctable">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="us">CarvAI Pro</th>
+          <th>VCarve Pro</th>
+          <th>Aspire</th>
+          <th>Easel Pro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hl"><td>2.5D Design &amp; Toolpaths</td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+        <tr><td>Full 3D Sculpting</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td></tr>
+        <tr class="hl"><td>AI Voice Design Assistant</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td></tr>
+        <tr><td>Natural Language Commands</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td></tr>
+        <tr class="hl"><td>Mac Native Support</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td><td><span class="ck">✓</span></td></tr>
+        <tr><td>Works on iPhone / Android</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td><td><span class="cp">Limited</span></td></tr>
+        <tr class="hl"><td>Works in Browser</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td><td><span class="ck">✓</span></td></tr>
+        <tr><td>9 Edge Profiles + Live 3D</td><td><span class="ck">✓</span></td><td><span class="cp">Basic</span></td><td><span class="cp">Limited</span></td><td><span class="cn">✗</span></td></tr>
+        <tr class="hl"><td>X-Carve / xTool Export</td><td><span class="ck">✓</span></td><td><span class="cp">Manual</span></td><td><span class="cp">Manual</span></td><td><span class="ck">✓</span></td></tr>
+        <tr><td>Monthly Subscription Option</td><td><span class="ck">✓</span></td><td><span class="cn">✗</span></td><td><span class="cn">✗</span></td><td><span class="ck">✓</span></td></tr>
+        <tr class="hl"><td>Starting Price</td><td style="color:var(--gb);font-weight:700">$19/mo</td><td style="color:var(--cd)">$699 once</td><td style="color:var(--cd)">$1,995 once</td><td style="color:var(--cd)">$50/mo</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--panel)">
+  <div class="sl">Simple Pricing</div>
+  <h2>Start Free.<br>No Credit Card.</h2>
+  <p class="ssub">14-day free trial on every plan. One subscription covers every device and every machine.</p>
+  <div class="pgrid">
+    <div class="pc">
+      <div class="pname">Starter</div><div class="pamt">$19</div><div class="pper">per month · all platforms</div>
+      <div class="pfeats">
+        <div class="pfeat">CarvAI (10 queries/month)</div>
+        <div class="pfeat">3 edge profiles</div>
+        <div class="pfeat">STL export</div>
+        <div class="pfeat">Mac &amp; Windows</div>
+      </div>
+      <button class="pbtn gh" onclick="openModal('trial')">Start Free Trial</button>
+    </div>
+    <div class="pc feat">
+      <div class="crown">MOST POPULAR</div>
+      <div class="pname">Pro</div><div class="pamt">$49</div><div class="pper">per month · all platforms</div>
+      <div class="pfeats">
+        <div class="pfeat">Unlimited CarvAI + Voice</div>
+        <div class="pfeat">All 9 edge profiles</div>
+        <div class="pfeat">All export formats</div>
+        <div class="pfeat">X-Carve, xTool, VCarve, Aspire</div>
+        <div class="pfeat">All platforms + offline</div>
+        <div class="pfeat">Full 3D modeling</div>
+      </div>
+      <button class="pbtn p" onclick="openModal('trial')">Start Free Trial</button>
+    </div>
+    <div class="pc">
+      <div class="pname">Studio</div><div class="pamt">$79</div><div class="pper">per month · all platforms</div>
+      <div class="pfeats">
+        <div class="pfeat">Everything in Pro</div>
+        <div class="pfeat">5 seats (team/shop)</div>
+        <div class="pfeat">Priority support</div>
+        <div class="pfeat">API access</div>
+        <div class="pfeat">White-label export</div>
+      </div>
+      <button class="pbtn gh" onclick="openModal('trial')">Start Free Trial</button>
+    </div>
+    <div class="pc" style="border-color:var(--al);background:rgba(212,130,10,0.03)">
+      <div class="pname" style="color:var(--al)">Perpetual</div>
+      <div class="pamt" style="color:var(--al)">$299</div>
+      <div class="pper">one-time · own it forever</div>
+      <div class="pfeats">
+        <div class="pfeat">Everything in Studio</div>
+        <div class="pfeat">No subscription ever</div>
+        <div class="pfeat">3 years free updates</div>
+        <div class="pfeat">Transferable license</div>
+      </div>
+      <button class="pbtn am" onclick="openModal('trial')">Buy Once · Own Forever</button>
+    </div>
+  </div>
+</section>
+
+<!-- OWNERSHIP -->
+<section id="own">
+  <div class="own-wrap">
+    <div class="own-logo">
+      <div class="own-mark">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M8 40 L24 8 L40 40" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 28 L34 28" stroke="white" stroke-width="3.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="own-name">
+        <b>CarvAI Pro</b>
+        <small>by Edward Hirth WoodWorks · Patent Pending</small>
+      </div>
+    </div>
+    <div class="own-sub">Intellectual Property &amp; Ownership Notice</div>
+    <div class="own-text">
+      <strong>© 2025 Edward Hirth, doing business as Edward Hirth WoodWorks. All Rights Reserved.</strong><br><br>
+      CarvAI Pro and all associated software, source code, algorithms, 3D rendering methods, AI integration architecture, CNC toolpath generation methods, plugin interfaces, UI designs, brand assets, and all related intellectual property is the <strong>exclusive proprietary property of Edward Hirth.</strong><br><br>
+      <strong>Patent Pending</strong> — Provisional Patent Application filed 2025, USPTO.<br>
+      <strong>Copyright Pending</strong> — U.S. Copyright Office registration in process.<br>
+      <strong>Trademarks Pending:</strong> CarvAI™ · CarvAI Pro™ · Edward Hirth WoodWorks™ · CNC Design Studio™<br><br>
+      <strong>AI Development Disclosure:</strong> AI tools were used as development instruments under the sole creative direction of Edward Hirth. Per 2024 USPTO guidelines, <strong>Edward Hirth is the sole inventor.</strong> AI tools do not constitute inventorship under U.S. law.<br><br>
+      This is <strong>NOT open source software.</strong> Unauthorized copying, distribution, reverse engineering, or use without a valid license is prohibited and will be prosecuted under 17 U.S.C. § 101 (up to $150,000 per infringement), U.S. patent law, and trade secret law.<br><br>
+      <em>VCarve™ and Aspire™ are trademarks of Vectric Ltd. X-Carve™ is a trademark of Inventables. xTool™ is a trademark of Makeblock. CarvAI Pro is an independent product with no affiliation with these companies.</em>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fg">
+    <div class="fb">
+      <div class="fb-logo">
+        <div class="fb-logo-mark">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M6 26 L16 6 L26 26" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 19 L22 19" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="fb-wordmark"><b>Carv<em>AI</em> Pro</b><small>by Edward Hirth WoodWorks</small></div>
+      </div>
+      <p>The AI CNC design studio that works inside VCarve, Aspire, X-Carve, xTool, and every device you own. Patent Pending.</p>
+    </div>
+    <div class="fc"><h4>Product</h4><a href="#features">Features</a><a href="#works-with">Machine Compatibility</a><a href="#compare">Compare</a><a href="#pricing">Pricing</a><a href="app.html">Open App</a></div>
+    <div class="fc"><h4>Legal</h4><a href="#">EULA</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a><a href="#">Patent Pending</a><a href="#">© Copyright Notice</a></div>
+    <div class="fc"><h4>Support</h4><a href="#">Documentation</a><a href="#">VCarve Guide</a><a href="#">xTool Guide</a><a href="#">X-Carve Guide</a><a href="#">Contact</a></div>
+  </div>
+  <div class="fbot">
+    <span>© 2025 Edward Hirth WoodWorks. All Rights Reserved. <span class="pat">Patent Pending.</span></span>
+    <span>CarvAI Pro · Inventor: Edward Hirth · AI-Assisted · Human-Invented &amp; Owned</span>
+    <span style="color:rgba(26,107,58,0.3)">Not affiliated with Vectric, Inventables, or Makeblock.</span>
+  </div>
+</footer>
+
+<!-- TRIAL MODAL -->
+<div class="mbg" id="trial-modal">
+  <div class="modal">
+    <div class="modal-logo">
+      <div class="modal-mark">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M8 40 L24 8 L40 40" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 28 L34 28" stroke="white" stroke-width="3.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="modal-wm"><b>Carv<em>AI</em> Pro</b><small>by Edward Hirth WoodWorks</small></div>
+    </div>
+    <h2>Start Free Trial</h2>
+    <p>14 days free — full Pro access instantly. No credit card. Works on every device and every machine.</p>
+    <div class="plrow">
+      <div class="plc" onclick="selPlan(this)"><div class="pn">Starter</div><div class="pa">$19</div><div class="pp">per month</div></div>
+      <div class="plc sel" onclick="selPlan(this)"><div class="best">BEST VALUE</div><div class="pn">Pro</div><div class="pa">$49</div><div class="pp">per month</div></div>
+      <div class="plc" onclick="selPlan(this)"><div class="pn">Studio</div><div class="pa">$79</div><div class="pp">per month</div></div>
+    </div>
+    <input class="min" type="email" id="t-email" placeholder="your@email.com">
+    <input class="min" type="text" id="t-name" placeholder="Your name">
+    <div class="mbtns">
+      <button class="mbtn c" onclick="closeModal('trial')">Maybe Later</button>
+      <button class="mbtn g" onclick="startTrial()">Start My Free Trial →</button>
+    </div>
+    <div class="mleg">
+      By signing up you agree to our <a href="#">EULA</a> &amp; <a href="#">Terms</a>.<br>
+      © 2025 Edward Hirth WoodWorks. All Rights Reserved. <strong style="color:var(--al)">Patent Pending.</strong><br>
+      Secured by Stripe. Cancel anytime. No surprise charges.
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal(id){document.getElementById(id+'-modal').classList.add('open')}
+function closeModal(id){document.getElementById(id+'-modal').classList.remove('open')}
+document.querySelectorAll('.mbg').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('open')}));
+function selPlan(el){document.querySelectorAll('.plc').forEach(e=>e.classList.remove('sel'));el.classList.add('sel')}
+function startTrial(){
+  const e=document.getElementById('t-email').value.trim();
+  if(!e||!e.includes('@')){toast('Enter a valid email');return}
+  localStorage.setItem('ehw_demo_user',JSON.stringify({email:e,name:document.getElementById('t-name').value||'Designer',plan:'pro',trialStart:new Date().toISOString()}));
+  window.location.href='app.html';
+}
+function toast(msg){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const d=document.createElement('div');d.className='toast';d.textContent=msg;
+  document.body.appendChild(d);setTimeout(()=>d.remove(),2500);
+}
+// Register service worker
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}
+</script>
+</body>
+</html>
